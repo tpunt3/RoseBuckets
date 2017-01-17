@@ -10,6 +10,7 @@ import java.util.List;
 public class BucketListItem {
 
     private List<SubItem> subItems;
+    private String mText;
     private boolean completed;
     private float percentCompleted;
 
@@ -17,10 +18,19 @@ public class BucketListItem {
         this.subItems = new ArrayList<SubItem>();
     }
 
+    public BucketListItem (String text) {
+        this.mText = text;
+        this.subItems = new ArrayList<SubItem>();
+    }
+
     public void completed() {
         this.completed = true;
     }
 
+
+    public String getmText() {
+        return mText;
+    }
 
     public List<SubItem> getSubItems() {
         return subItems;

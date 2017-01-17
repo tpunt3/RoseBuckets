@@ -3,6 +3,8 @@ package edu.rosehulman.punttj.rosebuckets;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -13,8 +15,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import edu.rosehulman.punttj.rosebuckets.model.BucketList;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    private BucketListAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +46,15 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+
+        RecyclerView recyclerView = (RecyclerView)findViewById(R.id.recycler_view);
+
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setHasFixedSize(true);
+        mAdapter = new BucketListAdapter(recyclerView);
+        recyclerView.setAdapter(mAdapter);
+
     }
 
     @Override
