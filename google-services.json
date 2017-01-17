@@ -1,0 +1,38 @@
+{
+  "project_info": {
+    "project_number": "602222591884",
+    "firebase_url": "https://rose-hulman-buckets.firebaseio.com",
+    "project_id": "rose-hulman-buckets",
+    "storage_bucket": "rose-hulman-buckets.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:602222591884:android:cb791738d5012a1c",
+        "android_client_info": {
+          "package_name": "edu.rosehulman.punttj.rosebuckets"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "602222591884-sfmjl8jiedq86lnahnt3qmofa83hkjra.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
