@@ -4,8 +4,15 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:text="Bucket list #1: 100%"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/bucketList" />
+        android:text="Welcome to RoseBuckets!"
+        android:id="@+id/welcome"
+        android:textStyle="bold"
+        android:textSize="20dp"
+        android:paddingBottom="10dp"
+        android:layout_centerHorizontal="true"/>
+
+
+
 </LinearLayout>

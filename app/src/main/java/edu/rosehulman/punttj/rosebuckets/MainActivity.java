@@ -1,8 +1,10 @@
 package edu.rosehulman.punttj.rosebuckets;
 
+import android.app.Fragment;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -15,10 +17,11 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import edu.rosehulman.punttj.rosebuckets.model.BucketList;
+import edu.rosehulman.punttj.rosebuckets.fragments.BucketListFragment;
+import edu.rosehulman.punttj.rosebuckets.fragments.LoginFragment;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, LoginFragment.OnLoginListener {
 
     private BucketListAdapter mAdapter;
 
@@ -46,6 +49,13 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        if (savedInstanceState == null) {
+            FragmentTransaction ft = getFragmentManager().beginTransaction();
+            Fragment fragment = new LoginFragment();
+            ft.add(R.id.content_main, fragment);
+            ft.commit();
+        }
 
 
         RecyclerView recyclerView = (RecyclerView)findViewById(R.id.recycler_view);
@@ -112,5 +122,14 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    public void onLoginPressed() {
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        Fragment fragment = new BucketListFragment();
+        ft.replace(R.id.content_main, fragment);
+        ft.addToBackStack("list");
+        ft.commit();
     }
 }
