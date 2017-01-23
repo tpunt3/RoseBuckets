@@ -2,6 +2,7 @@ package edu.rosehulman.punttj.rosebuckets.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -10,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import edu.rosehulman.punttj.rosebuckets.BLSubItemAdapter;
+import edu.rosehulman.punttj.rosebuckets.BucketListItemAdapter;
 import edu.rosehulman.punttj.rosebuckets.R;
 import edu.rosehulman.punttj.rosebuckets.model.SubItem;
 
@@ -19,27 +21,36 @@ import edu.rosehulman.punttj.rosebuckets.model.SubItem;
 
 public class BucketListSubItemFragment extends Fragment {
 
-    private OnSubItemSelectedListener mSubItemSelectedListener;
+    private OnSubItemSelectedListener mListener;
+    private BLSubItemAdapter mAdapter;
 
     public BucketListSubItemFragment() {
         //required empty constructor
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // The adapter needs the listener so that when a painting is selected, it can
+        // ask the listener (the MainActivity) to switch out the fragment.
+        mAdapter = new BLSubItemAdapter(mListener, getContext());
+    }
+
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        RecyclerView view = (RecyclerView) inflater.inflate(R.layout.fragment_bucket_list_sub_item, container, false);
-        view.setLayoutManager(new LinearLayoutManager(getContext()));
-        //TODO: might need to send it context as well?
-        BLSubItemAdapter adapter = new BLSubItemAdapter(mSubItemSelectedListener);
-        view.setAdapter(adapter);
+        View view = inflater.inflate(R.layout.fragment_bucket_list_sub_item, container, false);
+        RecyclerView recyclerView = (RecyclerView)view.findViewById(R.id.bucket_list_sub_items_recycler);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView.setAdapter(mAdapter);
         return view;
     }
 
     public void onAttach(Context context) {
         super.onAttach(context);
         if (context instanceof OnSubItemSelectedListener){
-            mSubItemSelectedListener = (OnSubItemSelectedListener) context;
+            mListener = (OnSubItemSelectedListener) context;
         } else {
             throw new RuntimeException(context.toString()
                                     + " must implement OnSubItemSelectedListener");
@@ -48,7 +59,7 @@ public class BucketListSubItemFragment extends Fragment {
 
     public void onDetach() {
         super.onDetach();
-        mSubItemSelectedListener = null;
+        mListener = null;
     }
 
     public interface OnSubItemSelectedListener {

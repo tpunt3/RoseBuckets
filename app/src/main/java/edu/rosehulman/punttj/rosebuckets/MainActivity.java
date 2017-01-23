@@ -18,12 +18,17 @@ import android.view.MenuItem;
 
 import edu.rosehulman.punttj.rosebuckets.fragments.BucketListFragment;
 import edu.rosehulman.punttj.rosebuckets.fragments.BucketListItemFragment;
+import edu.rosehulman.punttj.rosebuckets.fragments.BucketListSubItemFragment;
 import edu.rosehulman.punttj.rosebuckets.fragments.LoginFragment;
+import edu.rosehulman.punttj.rosebuckets.fragments.SubItemDetailFragment;
 import edu.rosehulman.punttj.rosebuckets.model.BucketList;
 import edu.rosehulman.punttj.rosebuckets.model.BucketListItem;
+import edu.rosehulman.punttj.rosebuckets.model.SubItem;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, LoginFragment.OnLoginListener, BucketListFragment.OnBLSelectedListener, BucketListItemFragment.OnBLItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, LoginFragment.OnLoginListener,
+        BucketListFragment.OnBLSelectedListener, BucketListItemFragment.OnBLItemSelectedListener,
+        BucketListSubItemFragment.OnSubItemSelectedListener{
 
     private BucketListAdapter mAdapter;
 
@@ -137,6 +142,19 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onBLItemSelected(BucketListItem item) {
-        Log.d("hi", "item selected");
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        Fragment fragment = new BucketListSubItemFragment();
+        ft.replace(R.id.content_main, fragment);
+        ft.addToBackStack("subitem");
+        ft.commit();
+    }
+
+    @Override
+    public void onSubItemSelected(SubItem subItem) {
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        Fragment fragment = SubItemDetailFragment.newInstance(subItem);
+        ft.replace(R.id.content_main, fragment);
+        ft.addToBackStack("detail");
+        ft.commit();
     }
 }

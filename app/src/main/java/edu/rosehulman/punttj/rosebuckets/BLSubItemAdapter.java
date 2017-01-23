@@ -1,5 +1,6 @@
 package edu.rosehulman.punttj.rosebuckets;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,11 +25,14 @@ public class BLSubItemAdapter extends RecyclerView.Adapter<BLSubItemAdapter.View
     private List<SubItem> mSubItems;
     private DatabaseReference mFirebase;
     private BucketListSubItemFragment.OnSubItemSelectedListener mListener;
+    private Context mContext;
 
-    public BLSubItemAdapter(BucketListSubItemFragment.OnSubItemSelectedListener listener) {
+    public BLSubItemAdapter(BucketListSubItemFragment.OnSubItemSelectedListener listener, Context context) {
         mSubItems = new ArrayList<>();
         mFirebase = FirebaseDatabase.getInstance().getReference();
         mListener = listener;
+        mContext = context;
+        addItem("sub item!");
 
     }
 
