@@ -1,5 +1,6 @@
 package edu.rosehulman.punttj.rosebuckets.fragments;
 
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
@@ -10,6 +11,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,7 +28,7 @@ public class BucketListFragment extends Fragment{
 
     private OnBLSelectedListener mListener;
     private BucketListAdapter mAdapter;
-
+    private FloatingActionButton mFab;
 
     public BucketListFragment(){
 
@@ -41,6 +43,14 @@ public class BucketListFragment extends Fragment{
         actionBar.setTitle(R.string.app_name);
         int defaultColor = ContextCompat.getColor(getContext(), R.color.colorPrimary);
         actionBar.setBackgroundDrawable(new ColorDrawable(defaultColor));
+
+        mFab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
+        mFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mAdapter.addEditBucketList(null);
+            }
+        });
     }
 
     @Override

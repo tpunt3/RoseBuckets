@@ -3,9 +3,11 @@ package edu.rosehulman.punttj.rosebuckets.fragments;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +25,7 @@ public class BucketListSubItemFragment extends Fragment {
 
     private OnSubItemSelectedListener mListener;
     private BLSubItemAdapter mAdapter;
+    private FloatingActionButton mFab;
 
     public BucketListSubItemFragment() {
         //required empty constructor
@@ -34,6 +37,14 @@ public class BucketListSubItemFragment extends Fragment {
         // The adapter needs the listener so that when a painting is selected, it can
         // ask the listener (the MainActivity) to switch out the fragment.
         mAdapter = new BLSubItemAdapter(mListener, getContext());
+
+        mFab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
+        mFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d("BLSUB", "sub bl clicked");
+            }
+        });
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

@@ -1,5 +1,6 @@
 package edu.rosehulman.punttj.rosebuckets.fragments;
 
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;

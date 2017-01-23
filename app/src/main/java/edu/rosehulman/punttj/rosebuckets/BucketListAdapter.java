@@ -51,21 +51,39 @@ public class BucketListAdapter extends RecyclerView.Adapter<BucketListAdapter.Vi
         notifyItemInserted(mBucketLists.size());
     }
 
-    void editBucketList(final int position){
-        final BucketList bl = mBucketLists.get(position);
+    public void addEditBucketList(final BucketList bl){
         AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
         View view = LayoutInflater.from(mContext).inflate(R.layout.dialog_edit, null, false);
         final EditText blEditText = (EditText) view.findViewById(R.id.dialog_edit_text);
-        blEditText.setText(bl.getName());
-        builder.setTitle(R.string.edit_bucket_list);
+
+        if(bl != null){
+            blEditText.setText(bl.getName());
+            builder.setTitle(R.string.edit_bucket_list);
+        }else{
+            builder.setTitle(R.string.create_new_bl);
+        }
+
         builder.setView(view);
         builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                bl.setName(blEditText.getText().toString());
-                notifyItemChanged(position);
+                if(bl != null){
+                    bl.setName(blEditText.getText().toString());
+                }else{
+                    addBucketList(blEditText.getText().toString());
+                }
+                notifyDataSetChanged();
             }
         });
+
+        if(bl != null) {
+            builder.setNeutralButton(R.string.edit_delete, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    mBucketLists.remove(bl);
+                }
+            });
+        }
         builder.setNegativeButton(android.R.string.cancel, null);
         builder.create().show();
     }
@@ -93,8 +111,8 @@ public class BucketListAdapter extends RecyclerView.Adapter<BucketListAdapter.Vi
             itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
-                    editBucketList(getAdapterPosition());
-                    return false;
+                    addEditBucketList(mBucketLists.get(getAdapterPosition()));
+                    return true;
                 }
             });
         }

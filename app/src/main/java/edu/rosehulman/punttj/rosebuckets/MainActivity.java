@@ -1,5 +1,6 @@
 package edu.rosehulman.punttj.rosebuckets;
 
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import edu.rosehulman.punttj.rosebuckets.fragments.AboutFragment;
 import edu.rosehulman.punttj.rosebuckets.fragments.BucketListFragment;
 import edu.rosehulman.punttj.rosebuckets.fragments.BucketListItemFragment;
 import edu.rosehulman.punttj.rosebuckets.fragments.BucketListSubItemFragment;
@@ -30,7 +32,7 @@ public class MainActivity extends AppCompatActivity
         BucketListFragment.OnBLSelectedListener, BucketListItemFragment.OnBLItemSelectedListener,
         BucketListSubItemFragment.OnSubItemSelectedListener{
 
-    private BucketListAdapter mAdapter;
+    private FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,14 +41,9 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setVisibility(View.GONE);
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -71,6 +68,18 @@ public class MainActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
+
+
+            FragmentManager fm = getSupportFragmentManager();
+            if(fm.getBackStackEntryCount() > 1) {
+                if (fm.getBackStackEntryAt(fm.getBackStackEntryCount() - 1).getName().equals("login")) {
+                    fab.setVisibility(View.GONE);
+                }
+                if (fm.getBackStackEntryAt(fm.getBackStackEntryCount() - 1).getName().equals("subItem")) {
+                    fab.setVisibility(View.VISIBLE);
+                }
+            }
+
             super.onBackPressed();
         }
     }
@@ -103,18 +112,28 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        Fragment switchTo = null;
 
-        } else if (id == R.id.nav_slideshow) {
+        switch(id){
+            case R.id.nav_about:
+                switchTo = new AboutFragment();
+                fab.setVisibility(View.GONE);
+                break;
+            case R.id.nav_home:
+                switchTo = new BucketListFragment();
+                fab.setVisibility(View.VISIBLE);
+                break;
+        }
 
-        } else if (id == R.id.nav_manage) {
+        if(switchTo != null) {
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            for(int i = 0; i < getSupportFragmentManager().getBackStackEntryCount(); i ++){
+                getSupportFragmentManager().popBackStackImmediate();
+            }
 
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+            ft.replace(R.id.content_main, switchTo);
+            ft.addToBackStack(null);
+            ft.commit();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -124,37 +143,41 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onLoginPressed() {
+        fab.setVisibility(View.VISIBLE);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         Fragment fragment = new BucketListFragment();
+        ft.replace(R.id.content_main, fragment);
+        ft.addToBackStack("login");
+        ft.commit();
+    }
+
+    @Override
+    public void onBLSelected(BucketList bl) {
+        fab.setVisibility(View.VISIBLE);
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        Fragment fragment = new BucketListItemFragment();
         ft.replace(R.id.content_main, fragment);
         ft.addToBackStack("bl");
         ft.commit();
     }
 
     @Override
-    public void onBLSelected(BucketList bl) {
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        Fragment fragment = new BucketListItemFragment();
-        ft.replace(R.id.content_main, fragment);
-        ft.addToBackStack("item");
-        ft.commit();
-    }
-
-    @Override
     public void onBLItemSelected(BucketListItem item) {
+        fab.setVisibility(View.VISIBLE);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         Fragment fragment = new BucketListSubItemFragment();
         ft.replace(R.id.content_main, fragment);
-        ft.addToBackStack("subitem");
+        ft.addToBackStack("blItem");
         ft.commit();
     }
 
     @Override
     public void onSubItemSelected(SubItem subItem) {
+        fab.setVisibility(View.GONE);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         Fragment fragment = SubItemDetailFragment.newInstance(subItem);
         ft.replace(R.id.content_main, fragment);
-        ft.addToBackStack("detail");
+        ft.addToBackStack("subItem");
         ft.commit();
     }
 }

@@ -11,4 +11,7 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="about_string">This app was created by Trent Punt and Vibha Alangar for the purpose of helping Rose-Hulman students enjoy their college years to the fullest. Create a bucket list and check off items to keep track of all the amazing things you do at Rose!</string>
+    <string name="edit_delete">delete</string>
+    <string name="create_new_bl">Create a new Bucket list</string>
 </resources>

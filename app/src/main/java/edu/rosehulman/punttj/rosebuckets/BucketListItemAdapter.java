@@ -71,6 +71,13 @@ public class BucketListItemAdapter extends RecyclerView.Adapter<BucketListItemAd
                 notifyItemChanged(position);
             }
         });
+
+        builder.setNeutralButton(R.string.edit_delete, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+            }
+        });
         builder.setNegativeButton(android.R.string.cancel, null);
         builder.create().show();
     }
@@ -102,7 +109,7 @@ public class BucketListItemAdapter extends RecyclerView.Adapter<BucketListItemAd
                 @Override
                 public boolean onLongClick(View view) {
                     editBucketListItem(getAdapterPosition());
-                    return false;
+                    return true;
                 }
             });
         }

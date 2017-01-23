@@ -4,12 +4,14 @@ import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,7 +29,7 @@ import edu.rosehulman.punttj.rosebuckets.model.BucketListItem;
 public class BucketListItemFragment extends Fragment{
     private OnBLItemSelectedListener mListener;
     private BucketListItemAdapter mAdapter;
-
+    private FloatingActionButton mFab;
 
     public BucketListItemFragment(){
 
@@ -42,6 +44,14 @@ public class BucketListItemFragment extends Fragment{
         actionBar.setTitle(R.string.app_name);
         int defaultColor = ContextCompat.getColor(getContext(), R.color.colorPrimary);
         actionBar.setBackgroundDrawable(new ColorDrawable(defaultColor));
+
+        mFab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
+        mFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d("BLITEM", "item clicked");
+            }
+        });
     }
 
     @Override
