@@ -1,12 +1,11 @@
 package edu.rosehulman.punttj.rosebuckets;
 
-import android.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.app.FragmentTransaction;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -19,9 +18,10 @@ import android.view.MenuItem;
 
 import edu.rosehulman.punttj.rosebuckets.fragments.BucketListFragment;
 import edu.rosehulman.punttj.rosebuckets.fragments.LoginFragment;
+import edu.rosehulman.punttj.rosebuckets.model.BucketList;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, LoginFragment.OnLoginListener {
+        implements NavigationView.OnNavigationItemSelectedListener, LoginFragment.OnLoginListener, BucketListFragment.OnBLSelectedListener {
 
     private BucketListAdapter mAdapter;
 
@@ -51,20 +51,11 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         if (savedInstanceState == null) {
-            FragmentTransaction ft = getFragmentManager().beginTransaction();
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             Fragment fragment = new LoginFragment();
             ft.add(R.id.content_main, fragment);
             ft.commit();
         }
-
-
-        RecyclerView recyclerView = (RecyclerView)findViewById(R.id.recycler_view);
-
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setHasFixedSize(true);
-        mAdapter = new BucketListAdapter(recyclerView);
-        recyclerView.setAdapter(mAdapter);
-
     }
 
     @Override
@@ -126,10 +117,15 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onLoginPressed() {
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         Fragment fragment = new BucketListFragment();
         ft.replace(R.id.content_main, fragment);
-        ft.addToBackStack("list");
+        ft.addToBackStack("bl");
         ft.commit();
+    }
+
+    @Override
+    public void onBLSelected(BucketList bl) {
+        Log.d("hi", "onBLSelected: ");
     }
 }
