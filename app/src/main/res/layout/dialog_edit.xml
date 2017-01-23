@@ -3,4 +3,16 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Enter the name of your Bucket List" />
+
+    <!--https://developer.android.com/training/keyboard-input/style.html-->
+    <EditText
+        android:id="@+id/dialog_edit_text"
+        android:inputType="text"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent" />
+
 </LinearLayout>

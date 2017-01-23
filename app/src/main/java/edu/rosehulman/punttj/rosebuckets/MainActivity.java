@@ -17,11 +17,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import edu.rosehulman.punttj.rosebuckets.fragments.BucketListFragment;
+import edu.rosehulman.punttj.rosebuckets.fragments.BucketListItemFragment;
 import edu.rosehulman.punttj.rosebuckets.fragments.LoginFragment;
 import edu.rosehulman.punttj.rosebuckets.model.BucketList;
+import edu.rosehulman.punttj.rosebuckets.model.BucketListItem;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, LoginFragment.OnLoginListener, BucketListFragment.OnBLSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, LoginFragment.OnLoginListener, BucketListFragment.OnBLSelectedListener, BucketListItemFragment.OnBLItemSelectedListener {
 
     private BucketListAdapter mAdapter;
 
@@ -126,6 +128,15 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onBLSelected(BucketList bl) {
-        Log.d("hi", "onBLSelected: ");
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        Fragment fragment = new BucketListItemFragment();
+        ft.replace(R.id.content_main, fragment);
+        ft.addToBackStack("item");
+        ft.commit();
+    }
+
+    @Override
+    public void onBLItemSelected(BucketListItem item) {
+        Log.d("hi", "item selected");
     }
 }
