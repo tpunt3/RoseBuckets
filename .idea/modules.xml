@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/RoseBucketsApp.iml" filepath="$PROJECT_DIR$/RoseBucketsApp.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/rosebuckets.iml" filepath="$PROJECT_DIR$/rosebuckets.iml" />
     </modules>
   </component>
 </project>
