@@ -12,26 +12,29 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.rosehulman.punttj.rosebuckets.fragments.BucketListSubItemFragment;
 import edu.rosehulman.punttj.rosebuckets.model.SubItem;
 
 /**
  * Created by alangavr on 1/22/2017.
  */
 
-public class BLSubItemListAdapter extends RecyclerView.Adapter<BLSubItemListAdapter.ViewHolder> {
+public class BLSubItemAdapter extends RecyclerView.Adapter<BLSubItemAdapter.ViewHolder> {
 
     private List<SubItem> mSubItems;
     private DatabaseReference mFirebase;
+    private BucketListSubItemFragment.OnSubItemSelectedListener mListener;
 
-    public BLSubItemListAdapter() {
+    public BLSubItemAdapter(BucketListSubItemFragment.OnSubItemSelectedListener listener) {
         mSubItems = new ArrayList<>();
         mFirebase = FirebaseDatabase.getInstance().getReference();
+        mListener = listener;
 
     }
 
 
     @Override
-    public BLSubItemListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.bucket_list_sub_item_row, parent, false);
         return new ViewHolder(view);
 
@@ -39,13 +42,24 @@ public class BLSubItemListAdapter extends RecyclerView.Adapter<BLSubItemListAdap
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.mCheckBox.setText(mSubItems.get(position).getDescription());
+        final SubItem current = mSubItems.get(position);
+        holder.mCheckBox.setText(current.getTitle());
+        holder.mCheckBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mListener.onSubItemSelected(current);
+            }
+        });
+    }
+
+    public void addItem(String title) {
+        mSubItems.add(new SubItem(title));
     }
 
 
     @Override
     public int getItemCount() {
-        return 0;
+        return mSubItems.size();
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {

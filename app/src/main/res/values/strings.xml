@@ -7,4 +7,8 @@
     <string name="action_settings">Settings</string>
     <string name="test">hi vibha</string>
     <string name="bucket_list_sub_item">Bucket List Sub Item</string>
+    <string name="bucket_list_sub_item_name">bucket list sub item name</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
