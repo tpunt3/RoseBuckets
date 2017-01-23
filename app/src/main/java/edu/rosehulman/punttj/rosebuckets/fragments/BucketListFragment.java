@@ -1,6 +1,6 @@
 package edu.rosehulman.punttj.rosebuckets.fragments;
 
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -70,7 +70,7 @@ public class BucketListFragment extends Fragment{
             mListener = (OnBLSelectedListener) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnPaintingSelectedListener");
+                    + " must implement OnBLSelectedListener");
         }
     }
 

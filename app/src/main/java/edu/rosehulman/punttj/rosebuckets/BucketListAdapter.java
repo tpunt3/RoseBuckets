@@ -64,6 +64,7 @@ public class BucketListAdapter extends RecyclerView.Adapter<BucketListAdapter.Vi
                 @Override
                 public void onClick(View view) {
                     //create new bucket list item fragment
+                    mListener.onBLSelected(mBucketLists.get(getAdapterPosition()));
                 }
             });
         }
