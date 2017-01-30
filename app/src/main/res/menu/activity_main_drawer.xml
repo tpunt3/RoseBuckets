@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <group android:checkableBehavior="single">
+    <group android:checkableBehavior="single"
+        android:id="@+id/nav_drawer">
         <item
             android:id="@+id/nav_about"
             android:icon="@android:drawable/ic_dialog_info"
@@ -10,6 +11,11 @@
             android:id="@+id/nav_home"
             android:icon="@android:drawable/btn_star_big_on"
             android:title="home"/>
+
+        <item
+            android:id="@+id/log_out"
+            android:icon="@android:drawable/ic_menu_revert"
+            android:title="@string/log_out"/>
     </group>
 
 </menu>
