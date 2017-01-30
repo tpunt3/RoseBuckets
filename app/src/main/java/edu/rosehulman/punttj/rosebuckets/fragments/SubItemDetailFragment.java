@@ -1,13 +1,19 @@
 package edu.rosehulman.punttj.rosebuckets.fragments;
 
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -27,6 +33,9 @@ public class SubItemDetailFragment extends Fragment {
 
     // TODO: Rename and change types of parameters
     private SubItem mSubItem;
+    private TextView mTitleView;
+    private ImageView mImageView;
+    private TextView mCommentView;
 
 
     public SubItemDetailFragment() {
@@ -62,16 +71,52 @@ public class SubItemDetailFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_sub_item_detail, container, false);
-        TextView titleView = (TextView) view.findViewById(R.id.fragment_detail_title);
-        titleView.setText(mSubItem.getTitle());
+        mTitleView = (TextView) view.findViewById(R.id.fragment_detail_title);
+        mTitleView.setText(mSubItem.getTitle());
 
-        ImageView imageview = (ImageView) view.findViewById(R.id.sub_item_photo);
+        mImageView = (ImageView) view.findViewById(R.id.sub_item_photo);
 
-        TextView comments = (TextView) view.findViewById(R.id.sub_item_comment_textView);
-        comments.setText(mSubItem.getComments());
+        mCommentView = (TextView) view.findViewById(R.id.sub_item_comment_textView);
+        mCommentView.setText(mSubItem.getComments());
+
+        Button editButton = (Button) view.findViewById(R.id.edit_button);
+        editButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                editDetail();
+            }
+        });
 
         return view;
 
     }
+
+    private void editDetail() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this.getContext());
+        View view = getLayoutInflater(this.getArguments()).inflate(R.layout.dialog_edit, null, false);
+        builder.setView(view);
+
+        final EditText captionET = (EditText) view.findViewById(R.id.dialog_edit_text);
+
+
+        builder.setNegativeButton(android.R.string.cancel, null);
+        builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                Log.d("subItem", "OK pressed");
+                String caption = captionET.getText().toString();
+                mSubItem.setComments(caption);
+                showCurrentItem();
+            }
+        });
+        builder.create().show();
+
+    }
+
+    private void showCurrentItem() {
+        mTitleView.setText(mSubItem.getTitle());
+        mCommentView.setText(mSubItem.getComments());
+    }
+
 
 }
