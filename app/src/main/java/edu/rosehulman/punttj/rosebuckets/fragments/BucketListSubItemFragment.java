@@ -12,8 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import edu.rosehulman.punttj.rosebuckets.BLSubItemAdapter;
-import edu.rosehulman.punttj.rosebuckets.BucketListItemAdapter;
+import edu.rosehulman.punttj.rosebuckets.Adapters.BLSubItemAdapter;
 import edu.rosehulman.punttj.rosebuckets.R;
 import edu.rosehulman.punttj.rosebuckets.model.SubItem;
 
@@ -42,7 +41,7 @@ public class BucketListSubItemFragment extends Fragment {
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d("BLSUB", "sub bl clicked");
+                mAdapter.addEditBucketListSubItem(null);
             }
         });
     }

@@ -1,4 +1,4 @@
-package edu.rosehulman.punttj.rosebuckets;
+package edu.rosehulman.punttj.rosebuckets.Adapters;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -10,14 +10,19 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.EditText;
 
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.rosehulman.punttj.rosebuckets.R;
+import edu.rosehulman.punttj.rosebuckets.SharedPreferencesUtils;
 import edu.rosehulman.punttj.rosebuckets.fragments.BucketListSubItemFragment;
-import edu.rosehulman.punttj.rosebuckets.model.BucketListItem;
 import edu.rosehulman.punttj.rosebuckets.model.SubItem;
 
 /**
@@ -27,16 +32,22 @@ import edu.rosehulman.punttj.rosebuckets.model.SubItem;
 public class BLSubItemAdapter extends RecyclerView.Adapter<BLSubItemAdapter.ViewHolder> {
 
     private List<SubItem> mSubItems;
-    private DatabaseReference mFirebase;
+    private DatabaseReference mSubItemRef;
     private BucketListSubItemFragment.OnSubItemSelectedListener mListener;
     private Context mContext;
+    private String parentUid;
 
     public BLSubItemAdapter(BucketListSubItemFragment.OnSubItemSelectedListener listener, Context context) {
         mSubItems = new ArrayList<>();
-        mFirebase = FirebaseDatabase.getInstance().getReference();
+        mSubItemRef = FirebaseDatabase.getInstance().getReference().child("subItems");
+
+        parentUid = SharedPreferencesUtils.getCurrentBucketListItem(context);
+
+        Query query = mSubItemRef.orderByChild("uid").equalTo(parentUid);
+        query.addChildEventListener(new SubItemChildEventListener());
+
         mListener = listener;
         mContext = context;
-        addItem("sub item!");
 
     }
 
@@ -55,29 +66,47 @@ public class BLSubItemAdapter extends RecyclerView.Adapter<BLSubItemAdapter.View
 
     }
 
-    public void addItem(String title) {
-        mSubItems.add(new SubItem(title));
+    public void addItem(SubItem item) {
+        mSubItemRef.push().setValue(item);
     }
 
-    void editBucketListSubItem(final int position){
-        final SubItem item = mSubItems.get(position);
+    void removeItem(SubItem item){
+        mSubItemRef.child(item.getKey()).removeValue();
+    }
+
+    public void addEditBucketListSubItem(final SubItem item){
         AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
         View view = LayoutInflater.from(mContext).inflate(R.layout.dialog_edit, null, false);
         final EditText blEditText = (EditText) view.findViewById(R.id.dialog_edit_text);
-        blEditText.setText(item.getTitle());
-        builder.setTitle(R.string.edit_bucket_list);
+
+        if(item !=  null){
+            blEditText.setText(item.getTitle());
+            builder.setTitle(R.string.edit_bucket_list);
+        }else{
+            builder.setTitle(R.string.create_sub_item);
+        }
+
         builder.setView(view);
         builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                item.setTitle(blEditText.getText().toString());
-                notifyItemChanged(position);
+                if(item != null){
+                    //todo update
+                    item.setTitle(blEditText.getText().toString());
+                }else{
+                    SubItem newItem = new SubItem(blEditText.getText().toString());
+                    newItem.setUid(parentUid);
+                    addItem(newItem);
+                }
+
+
+                notifyDataSetChanged();
             }
         });
         builder.setNeutralButton(R.string.edit_delete, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-
+                removeItem(item);
             }
         });
         builder.setNegativeButton(android.R.string.cancel, null);
@@ -108,10 +137,56 @@ public class BLSubItemAdapter extends RecyclerView.Adapter<BLSubItemAdapter.View
             itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
-                    editBucketListSubItem(getAdapterPosition());
-                    return true;
+                addEditBucketListSubItem(mSubItems.get(getAdapterPosition()));
+                return true;
                 }
             });
+        }
+    }
+
+    class SubItemChildEventListener implements ChildEventListener {
+
+        @Override
+        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+            SubItem item = dataSnapshot.getValue(SubItem.class);
+            item.setKey(dataSnapshot.getKey());
+            item.setUid(parentUid);
+            mSubItems.add(0, item);
+            notifyItemInserted(0);
+        }
+
+        @Override
+        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+            String key = dataSnapshot.getKey();
+            SubItem updated = dataSnapshot.getValue(SubItem.class);
+            for(SubItem item: mSubItems){
+                if(item.getKey().equals(key)){
+                    item.update(updated);
+                    notifyDataSetChanged();
+                    return;
+                }
+            }
+        }
+
+        @Override
+        public void onChildRemoved(DataSnapshot dataSnapshot) {
+            for(SubItem item: mSubItems){
+                if(item.getKey().equals(dataSnapshot.getKey())){
+                    mSubItems.remove(item);
+                    notifyDataSetChanged();
+                    return;
+                }
+            }
+        }
+
+        @Override
+        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+
         }
     }
 }

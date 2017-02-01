@@ -13,6 +13,8 @@ public class SubItem implements Parcelable {
     private String title;
     private Image picture;
     private String comments;
+    private String uid;
+    private String key;
 
     public SubItem() {
         this.title = "no title";
@@ -23,9 +25,12 @@ public class SubItem implements Parcelable {
         this.title = description;
     }
 
+
     protected SubItem(Parcel in) {
         title = in.readString();
         comments = in.readString();
+        uid = in.readString();
+        key = in.readString();
     }
 
     public static final Creator<SubItem> CREATOR = new Creator<SubItem>() {
@@ -39,6 +44,22 @@ public class SubItem implements Parcelable {
             return new SubItem[size];
         }
     };
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
 
     public String getTitle() {
         return title;
@@ -73,5 +94,12 @@ public class SubItem implements Parcelable {
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeString(title);
         parcel.writeString(comments);
+    }
+
+    public void update(SubItem item){
+        this.title = item.getTitle();
+        this.comments = item.getComments();
+        this.picture = item.getPicture();
+
     }
 }

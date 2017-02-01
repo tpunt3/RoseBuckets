@@ -1,6 +1,7 @@
 package edu.rosehulman.punttj.rosebuckets;
 
 import android.content.Intent;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -31,6 +32,8 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import edu.rosehulman.punttj.rosebuckets.fragments.AboutFragment;
 import edu.rosehulman.punttj.rosebuckets.fragments.BucketListFragment;
@@ -56,6 +59,7 @@ public class MainActivity extends AppCompatActivity
     private FirebaseAuth.AuthStateListener mAuthListener;
     private OnCompleteListener mOnCompleteListener;
     private GoogleApiClient mGoogleApiClient;
+    private DatabaseReference mFirebaseRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +75,6 @@ public class MainActivity extends AppCompatActivity
         initializeListeners();
         initializeGoogle();
 
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -80,6 +83,8 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        mFirebaseRef = FirebaseDatabase.getInstance().getReference();
 
         if (savedInstanceState == null) {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -95,6 +100,7 @@ public class MainActivity extends AppCompatActivity
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = mAuth.getCurrentUser();
                 if(user != null){
+                    SharedPreferencesUtils.setCurrentUser(MainActivity.this, user.getUid());
                     switchToBLFragment("users/" + user.getUid());
                 }else {
                     switchToLoginFragment();
@@ -284,7 +290,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onRosefireLogin() {
         //DONE: Log user in with RoseFire account
-        Intent signInIntent = Rosefire.getSignInIntent(this, "dc787450-28ec-470c-9461-248bb9868f50");
+        Intent signInIntent = Rosefire.getSignInIntent(this, Constants.ROSEFIRE_REGISTRY_TOKEN);
         startActivityForResult(signInIntent, RC_ROSEFIRE_LOGIN);
     }
 
@@ -296,6 +302,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onBLSelected(BucketList bl) {
         fab.setVisibility(View.VISIBLE);
+        SharedPreferencesUtils.setCurrentBucketList(this, bl.getKey());
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         Fragment fragment = new BucketListItemFragment();
         ft.replace(R.id.content_main, fragment);
@@ -306,6 +313,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onBLItemSelected(BucketListItem item) {
         fab.setVisibility(View.VISIBLE);
+        SharedPreferencesUtils.setCurrentBucketListItem(this, item.getKey());
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         Fragment fragment = new BucketListSubItemFragment();
         ft.replace(R.id.content_main, fragment);

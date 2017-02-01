@@ -25,4 +25,6 @@
     <string name="edit_delete">delete</string>
     <string name="create_new_bl">Create a new Bucket list</string>
     <string name="log_out">Log out!</string>
+    <string name="create_new_item">Create new bucket list item</string>
+    <string name="create_sub_item">add a new sub item</string>
 </resources>
