@@ -10,6 +10,20 @@ import android.content.SharedPreferences;
 
 public class SharedPreferencesUtils {
 
+    public static String getCurrentUserName(Context context){
+        SharedPreferences prefs = context.getSharedPreferences(Constants.PREFS, Activity.MODE_PRIVATE);
+        return prefs.getString(Constants.NAME_KEY, "");
+    }
+
+
+    public static void setCurrentUserName(Context context, String name) {
+        SharedPreferences prefs = context.getSharedPreferences(Constants.PREFS, Activity.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(Constants.NAME_KEY, name);
+        editor.commit();
+    }
+
+
     public static String getCurrentUser(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(Constants.PREFS, Activity.MODE_PRIVATE);
         return prefs.getString(Constants.UID_KEY, "");

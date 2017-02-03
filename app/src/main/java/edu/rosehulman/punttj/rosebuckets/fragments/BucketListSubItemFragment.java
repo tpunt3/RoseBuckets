@@ -7,12 +7,12 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
-import edu.rosehulman.punttj.rosebuckets.Adapters.BLSubItemAdapter;
+import edu.rosehulman.punttj.rosebuckets.adapters.BLSubItemAdapter;
 import edu.rosehulman.punttj.rosebuckets.R;
 import edu.rosehulman.punttj.rosebuckets.model.SubItem;
 
@@ -35,6 +35,7 @@ public class BucketListSubItemFragment extends Fragment {
         super.onCreate(savedInstanceState);
         // The adapter needs the listener so that when a painting is selected, it can
         // ask the listener (the MainActivity) to switch out the fragment.
+
         mAdapter = new BLSubItemAdapter(mListener, getContext());
 
         mFab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
@@ -50,6 +51,8 @@ public class BucketListSubItemFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_bucket_list_sub_item, container, false);
+        TextView titleText = (TextView) view.findViewById(R.id.subTitle);
+        mAdapter.setTitleText(titleText);
         RecyclerView recyclerView = (RecyclerView)view.findViewById(R.id.bucket_list_sub_items_recycler);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));

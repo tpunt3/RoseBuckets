@@ -14,8 +14,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
-import edu.rosehulman.punttj.rosebuckets.Adapters.BucketListAdapter;
+import edu.rosehulman.punttj.rosebuckets.SharedPreferencesUtils;
+import edu.rosehulman.punttj.rosebuckets.adapters.BucketListAdapter;
 import edu.rosehulman.punttj.rosebuckets.R;
 import edu.rosehulman.punttj.rosebuckets.model.BucketList;
 
@@ -69,6 +71,10 @@ public class BucketListFragment extends Fragment{
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(mAdapter);
+
+        TextView title = (TextView)view.findViewById(R.id.welcome);
+        title.setText("Welcome " + SharedPreferencesUtils.getCurrentUserName(getContext()));
+
         return view;
     }
 

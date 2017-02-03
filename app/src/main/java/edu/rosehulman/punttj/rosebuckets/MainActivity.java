@@ -101,7 +101,8 @@ public class MainActivity extends AppCompatActivity
                 FirebaseUser user = mAuth.getCurrentUser();
                 if(user != null){
                     SharedPreferencesUtils.setCurrentUser(MainActivity.this, user.getUid());
-                    switchToBLFragment("users/" + user.getUid());
+                    SharedPreferencesUtils.setCurrentUserName(MainActivity.this, user.getUid());
+                    switchToBLFragment();
                 }else {
                     switchToLoginFragment();
                 }
@@ -271,7 +272,7 @@ public class MainActivity extends AppCompatActivity
         ft.commit();
     }
 
-    private void switchToBLFragment(String path) {
+    private void switchToBLFragment() {
         fab.setVisibility(View.VISIBLE);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         Fragment fragment = new BucketListFragment();

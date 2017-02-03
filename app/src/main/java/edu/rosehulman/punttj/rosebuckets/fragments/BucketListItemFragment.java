@@ -11,12 +11,12 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
-import edu.rosehulman.punttj.rosebuckets.Adapters.BucketListItemAdapter;
+import edu.rosehulman.punttj.rosebuckets.adapters.BucketListItemAdapter;
 import edu.rosehulman.punttj.rosebuckets.R;
 import edu.rosehulman.punttj.rosebuckets.model.BucketListItem;
 
@@ -28,6 +28,7 @@ public class BucketListItemFragment extends Fragment{
     private OnBLItemSelectedListener mListener;
     private BucketListItemAdapter mAdapter;
     private FloatingActionButton mFab;
+    private TextView titleText;
 
     public BucketListItemFragment(){
 
@@ -57,6 +58,7 @@ public class BucketListItemFragment extends Fragment{
         super.onCreate(savedInstanceState);
         // The adapter needs the listener so that when a painting is selected, it can
         // ask the listener (the MainActivity) to switch out the fragment.
+
         mAdapter = new BucketListItemAdapter(mListener, getContext());
     }
 
@@ -65,10 +67,14 @@ public class BucketListItemFragment extends Fragment{
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_bucket_list_items, container, false);
+        titleText = (TextView) view.findViewById(R.id.title_text);
+        mAdapter.setTitleText(titleText);
+
         RecyclerView recyclerView = (RecyclerView)view.findViewById(R.id.bucket_list_items_recycler_view);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(mAdapter);
+
         return view;
     }
 

@@ -1,14 +1,16 @@
-package edu.rosehulman.punttj.rosebuckets.Adapters;
+package edu.rosehulman.punttj.rosebuckets.adapters;
 
 import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -16,6 +18,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,9 +26,9 @@ import java.util.List;
 import edu.rosehulman.punttj.rosebuckets.R;
 import edu.rosehulman.punttj.rosebuckets.SharedPreferencesUtils;
 import edu.rosehulman.punttj.rosebuckets.fragments.BucketListItemFragment;
-import edu.rosehulman.punttj.rosebuckets.model.BucketList;
 import edu.rosehulman.punttj.rosebuckets.model.BucketListItem;
 
+import static android.R.attr.data;
 import static android.R.attr.key;
 
 /**
@@ -39,6 +42,8 @@ public class BucketListItemAdapter extends RecyclerView.Adapter<BucketListItemAd
     private Context mContext;
     private DatabaseReference mItemRef;
     private String mUid;
+    private DatabaseReference titleRef;
+    private TextView mTitleText;
 
     public BucketListItemAdapter(BucketListItemFragment.OnBLItemSelectedListener listener, Context context) {
         mListener = listener;
@@ -47,10 +52,14 @@ public class BucketListItemAdapter extends RecyclerView.Adapter<BucketListItemAd
         mBucketListItems = new ArrayList<>();
         mItemRef = FirebaseDatabase.getInstance().getReference().child("items");
 
+        titleRef = FirebaseDatabase.getInstance().getReference().child("bucketLists");
+
         mUid = SharedPreferencesUtils.getCurrentBucketList(context);
 
         Query query = mItemRef.orderByChild("uid").equalTo(mUid);
         query.addChildEventListener(new ItemChildEventListener());
+
+        titleRef.addListenerForSingleValueEvent(new NameEventListener());
 
     }
 
@@ -63,6 +72,10 @@ public class BucketListItemAdapter extends RecyclerView.Adapter<BucketListItemAd
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         holder.mCheckbox.setText(mBucketListItems.get(position).getName());
+    }
+
+    public void setTitleText(TextView titleText){
+        mTitleText = titleText;
     }
 
     public void addItem(BucketListItem item){
@@ -183,6 +196,24 @@ public class BucketListItemAdapter extends RecyclerView.Adapter<BucketListItemAd
         @Override
         public void onChildMoved(DataSnapshot dataSnapshot, String s) {
 
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+
+        }
+    }
+
+    class NameEventListener implements ValueEventListener {
+
+        @Override
+        public void onDataChange(DataSnapshot dataSnapshot) {
+
+            for (DataSnapshot snap : dataSnapshot.getChildren()){
+                if (snap.getKey().equals(mUid)){
+                    mTitleText.setText(snap.child("name").getValue(String.class));
+                }
+            }
         }
 
         @Override

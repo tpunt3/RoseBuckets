@@ -1,6 +1,5 @@
-package edu.rosehulman.punttj.rosebuckets.Adapters;
+package edu.rosehulman.punttj.rosebuckets.adapters;
 
-import android.app.usage.NetworkStats;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
@@ -26,7 +25,6 @@ import edu.rosehulman.punttj.rosebuckets.SharedPreferencesUtils;
 import edu.rosehulman.punttj.rosebuckets.fragments.BucketListFragment;
 import edu.rosehulman.punttj.rosebuckets.model.BucketList;
 
-import static android.R.attr.key;
 import static edu.rosehulman.punttj.rosebuckets.R.id.bucketList;
 
 /**

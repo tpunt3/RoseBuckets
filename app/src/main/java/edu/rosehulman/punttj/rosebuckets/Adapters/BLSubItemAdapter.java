@@ -1,4 +1,4 @@
-package edu.rosehulman.punttj.rosebuckets.Adapters;
+package edu.rosehulman.punttj.rosebuckets.adapters;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -16,6 +17,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +38,8 @@ public class BLSubItemAdapter extends RecyclerView.Adapter<BLSubItemAdapter.View
     private BucketListSubItemFragment.OnSubItemSelectedListener mListener;
     private Context mContext;
     private String parentUid;
+    private DatabaseReference titleRef;
+    private TextView mTitleText;
 
     public BLSubItemAdapter(BucketListSubItemFragment.OnSubItemSelectedListener listener, Context context) {
         mSubItems = new ArrayList<>();
@@ -48,6 +52,9 @@ public class BLSubItemAdapter extends RecyclerView.Adapter<BLSubItemAdapter.View
 
         mListener = listener;
         mContext = context;
+
+        titleRef = FirebaseDatabase.getInstance().getReference().child("items");
+        titleRef.addListenerForSingleValueEvent(new NameEventListener());
 
     }
 
@@ -64,6 +71,10 @@ public class BLSubItemAdapter extends RecyclerView.Adapter<BLSubItemAdapter.View
         final SubItem current = mSubItems.get(position);
         holder.mCheckBox.setText(current.getTitle());
 
+    }
+
+    public void setTitleText(TextView titleText){
+        mTitleText = titleText;
     }
 
     public void addItem(SubItem item) {
@@ -182,6 +193,23 @@ public class BLSubItemAdapter extends RecyclerView.Adapter<BLSubItemAdapter.View
         @Override
         public void onChildMoved(DataSnapshot dataSnapshot, String s) {
 
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+
+        }
+    }
+
+    class NameEventListener implements ValueEventListener{
+
+        @Override
+        public void onDataChange(DataSnapshot dataSnapshot) {
+            for (DataSnapshot snap : dataSnapshot.getChildren()){
+                if (snap.getKey().equals(parentUid)){
+                    mTitleText.setText(snap.child("name").getValue(String.class));
+                }
+            }
         }
 
         @Override
