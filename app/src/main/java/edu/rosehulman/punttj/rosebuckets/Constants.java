@@ -12,6 +12,10 @@ public class Constants {
     public static final String ITEM_NAME = "ITEM_NAME";
     public static final String NAME_KEY = "NAME_KEY";
 
+    public static final String DETAIL_FRAG = "DETAIL FRAGMENT";
+    public static final String PHOTO_TAG = "photos";
+    public static final int RC_PHOTO_ACTIVITY = 1;
+
 
 
     public static final String ROSEFIRE_REGISTRY_TOKEN = "dc787450-28ec-470c-9461-248bb9868f50";

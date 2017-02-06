@@ -2,12 +2,14 @@ package edu.rosehulman.punttj.rosebuckets.fragments;
 
 
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
-
-import android.support.design.widget.FloatingActionButton;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,8 +19,12 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import edu.rosehulman.punttj.rosebuckets.Constants;
+import edu.rosehulman.punttj.rosebuckets.PhotoUtils;
 import edu.rosehulman.punttj.rosebuckets.R;
 import edu.rosehulman.punttj.rosebuckets.model.SubItem;
+
+import static android.app.Activity.RESULT_OK;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -31,11 +37,16 @@ public class SubItemDetailFragment extends Fragment {
     private static final String SUB_ITEM = "subItem";
 
 
+
     // TODO: Rename and change types of parameters
     private SubItem mSubItem;
     private TextView mTitleView;
     private ImageView mImageView;
     private TextView mCommentView;
+
+    private Bitmap mBitmap;
+
+
 
 
     public SubItemDetailFragment() {
@@ -87,6 +98,14 @@ public class SubItemDetailFragment extends Fragment {
             }
         });
 
+        Button addPicButton = (Button) view.findViewById(R.id.add_pic_button);
+        addPicButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                takePhoto();
+            }
+        });
+
         return view;
 
     }
@@ -113,10 +132,41 @@ public class SubItemDetailFragment extends Fragment {
 
     }
 
+    private void takePhoto() {
+        Log.d(Constants.PHOTO_TAG, "takePhoto() started");
+        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        Uri uri = PhotoUtils.getOutputMediaUri(getString(R.string.app_name));
+        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+        Log.d(Constants.PHOTO_TAG, "Path: " + uri.getPath());
+        startActivityForResult(cameraIntent, Constants.RC_PHOTO_ACTIVITY);
+        mSubItem.setPath(uri.getPath());
+
+
+    }
+
     private void showCurrentItem() {
         mTitleView.setText(mSubItem.getTitle());
         mCommentView.setText(mSubItem.getComments());
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
+        if (resultCode != RESULT_OK) {
+            return;
+        }
+
+        if (requestCode == Constants.RC_PHOTO_ACTIVITY) {
+            Log.d(Constants.PHOTO_TAG, "yay! we're good till this far");
+            mBitmap = BitmapFactory.decodeFile(mSubItem.getPath());
+            int width = 512;
+            int height = 512;
+            mBitmap = Bitmap.createScaledBitmap(mBitmap, width, height, true);
+            mImageView.setImageBitmap(mBitmap);
+            Log.d(Constants.PHOTO_TAG, "trying to see how far we get");
+        }
+
+
+    }
 }

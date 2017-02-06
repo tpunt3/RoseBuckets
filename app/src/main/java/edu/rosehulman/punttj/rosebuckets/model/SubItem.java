@@ -15,6 +15,7 @@ public class SubItem implements Parcelable {
     private String comments;
     private String uid;
     private String key;
+    private String path;
 
     public SubItem() {
         this.title = "no title";
@@ -101,5 +102,13 @@ public class SubItem implements Parcelable {
         this.comments = item.getComments();
         this.picture = item.getPicture();
 
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
     }
 }
