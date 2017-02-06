@@ -1,23 +1,22 @@
 package edu.rosehulman.punttj.rosebuckets;
 
 import android.content.Intent;
-import android.provider.ContactsContract;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.app.Fragment;
-import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.util.Log;
-import android.view.View;
-import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -255,6 +254,11 @@ public class MainActivity extends AppCompatActivity
             }
         } else{
             showLoginError("Rosefire login failed");
+            //TODO: there can only be one onActivityResult,
+            //TODO: so we need to bring the logic from SubItemDetailFragment to here
+            //TODO: the tricky part will be figuring out a way to have the right SubItem to send in
+
+            //(new LoginFragment()).onActivityResult();
         }
     }
 
