@@ -3,12 +3,14 @@ package edu.rosehulman.punttj.rosebuckets.fragments;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.CursorLoader;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -140,8 +142,12 @@ public class SubItemDetailFragment extends Fragment {
         Log.d(Constants.PHOTO_TAG, "Path: " + uri.getPath());
         startActivityForResult(cameraIntent, Constants.RC_PHOTO_ACTIVITY);
         mSubItem.setPath(uri.getPath());
+    }
 
-
+    private void loadFromGallery() {
+        Log.d(Constants.PHOTO_TAG, "loadFromGallery() started");
+        Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(galleryIntent, Constants.PICK_FROM_GALLERY_REQUEST);
     }
 
     private void showCurrentItem() {
@@ -167,6 +173,31 @@ public class SubItemDetailFragment extends Fragment {
             Log.d(Constants.PHOTO_TAG, "trying to see how far we get");
         }
 
+        if (requestCode == Constants.PICK_FROM_GALLERY_REQUEST) {
+            Log.d(Constants.PHOTO_TAG, "Back up from the gallery");
+            Uri uri = data.getData();
+            String realPath = getRealPathFromUri(uri);
+            mBitmap = BitmapFactory.decodeFile(realPath);
+            int width = 512;
+            int height = 512;
+            mBitmap = Bitmap.createScaledBitmap(mBitmap, width, height, true);
+            mImageView.setImageBitmap(mBitmap);
+            mSubItem.setPath(realPath);
 
+        }
+
+
+    }
+
+
+    private String getRealPathFromUri(Uri contentUri) {
+        String[] projection = {MediaStore.Images.Media.DATA};
+        CursorLoader cursorLoader = new CursorLoader(getContext(), contentUri,
+                projection, null, null, null);
+        Cursor cursor = cursorLoader.loadInBackground();
+        cursor.moveToFirst();
+        int columnIndex = cursor
+                .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        return cursor.getString(columnIndex);
     }
 }

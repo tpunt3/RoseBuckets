@@ -38,4 +38,5 @@ public class PhotoUtils {
         // Return the URI of the file.
         return Uri.fromFile(mediaFile);
     }
+
 }
