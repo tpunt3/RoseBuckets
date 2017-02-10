@@ -11,6 +11,8 @@ public class Constants {
     public static final String ITEM_UID = "ITEM_UID";
     public static final String ITEM_NAME = "ITEM_NAME";
     public static final String NAME_KEY = "NAME_KEY";
+    public static final String SUBITEM_UID = "SUBITEM_UID";
+
 
     public static final String DETAIL_FRAG = "DETAIL FRAGMENT";
     public static final String PHOTO_TAG = "photos";

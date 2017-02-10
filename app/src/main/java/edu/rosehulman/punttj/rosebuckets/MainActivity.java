@@ -31,8 +31,14 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.EventListener;
 
 import edu.rosehulman.punttj.rosebuckets.fragments.AboutFragment;
 import edu.rosehulman.punttj.rosebuckets.fragments.BucketListFragment;
@@ -45,6 +51,9 @@ import edu.rosehulman.punttj.rosebuckets.model.BucketListItem;
 import edu.rosehulman.punttj.rosebuckets.model.SubItem;
 import edu.rosehulman.rosefire.Rosefire;
 import edu.rosehulman.rosefire.RosefireResult;
+
+import static android.os.Build.VERSION_CODES.M;
+import static edu.rosehulman.punttj.rosebuckets.SharedPreferencesUtils.getCurrentSubItem;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, LoginFragment.OnLoginListener,
@@ -253,7 +262,12 @@ public class MainActivity extends AppCompatActivity
                         .addOnCompleteListener(this, mOnCompleteListener);
             }
         } else{
-            showLoginError("Rosefire login failed");
+            String subUid = SharedPreferencesUtils.getCurrentSubItem(this);
+            Log.d("SUB UID", subUid);
+            DatabaseReference childRef = FirebaseDatabase.getInstance().getReference().child("subItems/"+subUid);
+
+            childRef.addListenerForSingleValueEvent(new SubEventListener());
+
             //TODO: there can only be one onActivityResult,
             //TODO: so we need to bring the logic from SubItemDetailFragment to here
             //TODO: the tricky part will be figuring out a way to have the right SubItem to send in
@@ -329,6 +343,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onSubItemSelected(SubItem subItem) {
         fab.setVisibility(View.GONE);
+        SharedPreferencesUtils.setCurrentSubItem(this, subItem.getKey());
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         Fragment fragment = SubItemDetailFragment.newInstance(subItem);
         ft.replace(R.id.content_main, fragment);
@@ -343,5 +358,20 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         showLoginError("Google connection failed");
+    }
+
+    class SubEventListener implements ValueEventListener{
+
+        @Override
+        public void onDataChange(DataSnapshot dataSnapshot) {
+            Log.d("woo", "data change");
+            SubItem item = dataSnapshot.getValue(SubItem.class);
+            onSubItemSelected(item);
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+
+        }
     }
 }

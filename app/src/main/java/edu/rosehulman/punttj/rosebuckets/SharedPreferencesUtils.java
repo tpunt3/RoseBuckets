@@ -66,4 +66,16 @@ public class SharedPreferencesUtils {
         editor.remove(Constants.UID_KEY);
         editor.apply();
     }
+
+    public static void setCurrentSubItem(Context context, String uid){
+        SharedPreferences prefs = context.getSharedPreferences(Constants.PREFS, Activity.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(Constants.SUBITEM_UID, uid);
+        editor.commit();
+    }
+
+    public static String getCurrentSubItem(Context context){
+        SharedPreferences prefs = context.getSharedPreferences(Constants.PREFS, Activity.MODE_PRIVATE);
+        return prefs.getString(Constants.SUBITEM_UID, "");
+    }
 }
