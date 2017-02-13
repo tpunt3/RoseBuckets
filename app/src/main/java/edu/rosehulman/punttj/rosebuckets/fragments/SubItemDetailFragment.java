@@ -1,18 +1,14 @@
 package edu.rosehulman.punttj.rosebuckets.fragments;
 
 
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.CursorLoader;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,24 +19,14 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
-
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 
 import edu.rosehulman.punttj.rosebuckets.Constants;
 import edu.rosehulman.punttj.rosebuckets.PhotoUtils;
@@ -187,7 +173,7 @@ public class SubItemDetailFragment extends Fragment {
         Log.d("PATH!!", uri.getPath());
         mSubItem.setPath(uri.getPath());
         subRef.setValue(mSubItem);
-
+        Log.d(Constants.PHOTO_TAG, "end of takePhoto()");
 
     }
 
@@ -205,7 +191,7 @@ public class SubItemDetailFragment extends Fragment {
         }
 
         if (requestCode == Constants.RC_PHOTO_ACTIVITY) {
-            Log.d(Constants.PHOTO_TAG, "yay! we're good till this far");
+            Log.d(Constants.PHOTO_TAG, "Detail Fragment's onActivityResult, requestCode = PHOTO ACTIVITY");
             mBitmap = BitmapFactory.decodeFile(mSubItem.getPath());
             int width = 512;
             int height = 512;

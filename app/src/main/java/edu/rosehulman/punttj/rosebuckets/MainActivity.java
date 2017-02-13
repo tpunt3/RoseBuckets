@@ -2,7 +2,6 @@ package edu.rosehulman.punttj.rosebuckets;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -78,6 +77,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d("MainActivity", "onCreate called in main activity");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -102,6 +102,9 @@ public class MainActivity extends AppCompatActivity
         mFirebaseRef = FirebaseDatabase.getInstance().getReference();
         mStorageRef = FirebaseStorage.getInstance().getReference();
 
+        String savedString = (savedInstanceState == null) ? "this is null" : savedInstanceState.toString();
+
+        Log.d("Main Activity", "saved Instance state: " + savedString);
         if (savedInstanceState == null) {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             Fragment fragment = new LoginFragment();
@@ -270,6 +273,7 @@ public class MainActivity extends AppCompatActivity
                         .addOnCompleteListener(this, mOnCompleteListener);
             }
         } else if (requestCode == Constants.RC_PHOTO_ACTIVITY) {
+            Log.d("Main Activity", "request Code is PHOTO ACTIVITY, MainActivity onActivityResult");
             String subUid = SharedPreferencesUtils.getCurrentSubItem(this);
             Log.d("SUB UID", subUid);
             DatabaseReference childRef = FirebaseDatabase.getInstance().getReference().child("subItems/" + subUid);
@@ -277,7 +281,7 @@ public class MainActivity extends AppCompatActivity
             childRef.addListenerForSingleValueEvent(new SubEventListener());
         }
         else{
-
+            Log.d("Main Acitivy", "else case, MainActivity onActivityResult");
             String subUid = SharedPreferencesUtils.getCurrentSubItem(this);
             DatabaseReference childRef = FirebaseDatabase.getInstance().getReference().child("subItems/"+subUid);
 
