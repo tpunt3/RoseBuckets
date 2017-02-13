@@ -1,6 +1,8 @@
 package edu.rosehulman.punttj.rosebuckets;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -25,6 +27,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
@@ -36,6 +40,14 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 
 import edu.rosehulman.punttj.rosebuckets.fragments.AboutFragment;
 import edu.rosehulman.punttj.rosebuckets.fragments.BucketListFragment;
@@ -62,6 +74,7 @@ public class MainActivity extends AppCompatActivity
     private OnCompleteListener mOnCompleteListener;
     private GoogleApiClient mGoogleApiClient;
     private DatabaseReference mFirebaseRef;
+    private StorageReference mStorageRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +100,7 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         mFirebaseRef = FirebaseDatabase.getInstance().getReference();
+        mStorageRef = FirebaseStorage.getInstance().getReference();
 
         if (savedInstanceState == null) {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -356,11 +370,54 @@ public class MainActivity extends AppCompatActivity
         showLoginError("Google connection failed");
     }
 
+    private void uploadPhoto(String path){
+        StorageReference myRef = mStorageRef.child("images/"+path);
+
+        final ProgressDialog df = new ProgressDialog(this);
+        df.setTitle("Uploading");
+        df.show();
+
+        File file = new File(path);
+        FileInputStream fs = null;
+        try {
+            fs = new FileInputStream(file);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        myRef.putStream(fs)
+                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        // Get a URL to the uploaded content
+                        df.dismiss();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        // Handle unsuccessful uploads
+                        // ...
+                        df.dismiss();
+                    }
+                })
+                .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                        //calculating progress percentage
+                        double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
+
+                        //displaying percentage in progress dialog
+                        df.setMessage("Uploaded " + ((int) progress) + "%...");
+                    }
+                });
+    }
+
     class SubEventListener implements ValueEventListener{
 
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
             SubItem item = dataSnapshot.getValue(SubItem.class);
+            uploadPhoto(item.getPath());
             onSubItemSelected(item);
         }
 

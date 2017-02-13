@@ -1,6 +1,7 @@
 package edu.rosehulman.punttj.rosebuckets.fragments;
 
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -9,6 +10,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.CursorLoader;
 import android.support.v7.app.AlertDialog;
@@ -21,6 +23,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -29,8 +33,14 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 
 import edu.rosehulman.punttj.rosebuckets.Constants;
 import edu.rosehulman.punttj.rosebuckets.PhotoUtils;
@@ -65,6 +75,7 @@ public class SubItemDetailFragment extends Fragment {
     private StorageReference mStorageRef;
 
 
+
     public SubItemDetailFragment() {
         // Required empty public constructor
     }
@@ -91,7 +102,9 @@ public class SubItemDetailFragment extends Fragment {
         if (getArguments() != null) {
             mSubItem = getArguments().getParcelable(SUB_ITEM);
         }
+
         mStorageRef = FirebaseStorage.getInstance().getReference();
+
     }
 
     @Override
@@ -174,6 +187,8 @@ public class SubItemDetailFragment extends Fragment {
         Log.d("PATH!!", uri.getPath());
         mSubItem.setPath(uri.getPath());
         subRef.setValue(mSubItem);
+
+
     }
 
     private void showCurrentItem() {
