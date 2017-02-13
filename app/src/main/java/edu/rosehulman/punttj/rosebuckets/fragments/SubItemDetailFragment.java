@@ -189,6 +189,16 @@ public class SubItemDetailFragment extends Fragment {
 
     }
 
+    public void setImage() {
+        Log.d(Constants.PHOTO_TAG, "yay! we're good till this far");
+        mBitmap = BitmapFactory.decodeFile(mSubItem.getPath());
+        int width = 512;
+        int height = 512;
+        mBitmap = Bitmap.createScaledBitmap(mBitmap, width, height, true);
+        mImageView.setImageBitmap(mBitmap);
+        Log.d(Constants.PHOTO_TAG, "trying to see how far we get");
+    }
+
 
     private String getRealPathFromUri(Uri contentUri) {
         String[] projection = {MediaStore.Images.Media.DATA};

@@ -35,10 +35,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-
-import java.util.EventListener;
 
 import edu.rosehulman.punttj.rosebuckets.fragments.AboutFragment;
 import edu.rosehulman.punttj.rosebuckets.fragments.BucketListFragment;
@@ -51,9 +48,6 @@ import edu.rosehulman.punttj.rosebuckets.model.BucketListItem;
 import edu.rosehulman.punttj.rosebuckets.model.SubItem;
 import edu.rosehulman.rosefire.Rosefire;
 import edu.rosehulman.rosefire.RosefireResult;
-
-import static android.os.Build.VERSION_CODES.M;
-import static edu.rosehulman.punttj.rosebuckets.SharedPreferencesUtils.getCurrentSubItem;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, LoginFragment.OnLoginListener,
@@ -261,7 +255,17 @@ public class MainActivity extends AppCompatActivity
                 mAuth.signInWithCustomToken(result.getToken())
                         .addOnCompleteListener(this, mOnCompleteListener);
             }
+        } else if (requestCode == Constants.RC_PHOTO_ACTIVITY) {
+            String subUid = SharedPreferencesUtils.getCurrentSubItem(this);
+            Log.d("SUB UID", subUid);
+            DatabaseReference childRef = FirebaseDatabase.getInstance().getReference().child("subItems/" + subUid);
+
+            childRef.addListenerForSingleValueEvent(new SubEventListener());
+
         } else{
+            Log.d("else", "hello, here we are");
+            Log.d("request", "" + requestCode);
+
             String subUid = SharedPreferencesUtils.getCurrentSubItem(this);
             Log.d("SUB UID", subUid);
             DatabaseReference childRef = FirebaseDatabase.getInstance().getReference().child("subItems/"+subUid);
@@ -367,6 +371,8 @@ public class MainActivity extends AppCompatActivity
             Log.d("woo", "data change");
             SubItem item = dataSnapshot.getValue(SubItem.class);
             onSubItemSelected(item);
+
+
         }
 
         @Override
