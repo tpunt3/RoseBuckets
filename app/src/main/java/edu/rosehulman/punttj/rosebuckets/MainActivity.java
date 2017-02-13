@@ -261,23 +261,24 @@ public class MainActivity extends AppCompatActivity
             DatabaseReference childRef = FirebaseDatabase.getInstance().getReference().child("subItems/" + subUid);
 
             childRef.addListenerForSingleValueEvent(new SubEventListener());
-
-        } else{
-            Log.d("else", "hello, here we are");
-            Log.d("request", "" + requestCode);
-
-            String subUid = SharedPreferencesUtils.getCurrentSubItem(this);
-            Log.d("SUB UID", subUid);
-            DatabaseReference childRef = FirebaseDatabase.getInstance().getReference().child("subItems/"+subUid);
-
-            childRef.addListenerForSingleValueEvent(new SubEventListener());
-
-            //TODO: there can only be one onActivityResult,
-            //TODO: so we need to bring the logic from SubItemDetailFragment to here
-            //TODO: the tricky part will be figuring out a way to have the right SubItem to send in
-
-            //(new LoginFragment()).onActivityResult();
         }
+
+//        } else{
+//            Log.d("else", "hello, here we are");
+//            Log.d("request", "" + requestCode);
+//
+//            String subUid = SharedPreferencesUtils.getCurrentSubItem(this);
+//            Log.d("SUB UID", subUid);
+//            DatabaseReference childRef = FirebaseDatabase.getInstance().getReference().child("subItems/"+subUid);
+//
+//            childRef.addListenerForSingleValueEvent(new SubEventListener());
+//
+//            //TODO: there can only be one onActivityResult,
+//            //TODO: so we need to bring the logic from SubItemDetailFragment to here
+//            //TODO: the tricky part will be figuring out a way to have the right SubItem to send in
+//
+//            //(new LoginFragment()).onActivityResult();
+//        }
     }
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
