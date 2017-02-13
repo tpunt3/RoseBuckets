@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -147,6 +148,7 @@ public class BucketListAdapter extends RecyclerView.Adapter<BucketListAdapter.Vi
 
         @Override
         public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+            Log.d("Bucket", "child added");
             BucketList bucket = dataSnapshot.getValue(BucketList.class);
             bucket.setKey(dataSnapshot.getKey());
             bucket.setUid(mUid);

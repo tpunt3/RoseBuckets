@@ -21,6 +21,9 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
 import edu.rosehulman.punttj.rosebuckets.Constants;
 import edu.rosehulman.punttj.rosebuckets.PhotoUtils;
 import edu.rosehulman.punttj.rosebuckets.R;
@@ -48,7 +51,7 @@ public class SubItemDetailFragment extends Fragment {
 
     private Bitmap mBitmap;
 
-
+    private StorageReference mStorageRef;
 
 
     public SubItemDetailFragment() {
@@ -77,6 +80,7 @@ public class SubItemDetailFragment extends Fragment {
         if (getArguments() != null) {
             mSubItem = getArguments().getParcelable(SUB_ITEM);
         }
+        mStorageRef = FirebaseStorage.getInstance().getReference();
     }
 
     @Override
