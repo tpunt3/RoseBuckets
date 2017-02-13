@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -169,7 +168,7 @@ public class BLSubItemAdapter extends RecyclerView.Adapter<BLSubItemAdapter.View
             item.setKey(dataSnapshot.getKey());
             item.setUid(parentUid);
             mSubItems.add(0, item);
-            notifyItemInserted(0);
+            notifyDataSetChanged();
         }
 
         @Override
