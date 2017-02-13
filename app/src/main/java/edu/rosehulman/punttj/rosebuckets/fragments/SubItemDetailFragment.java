@@ -28,6 +28,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
 
 import edu.rosehulman.punttj.rosebuckets.Constants;
 import edu.rosehulman.punttj.rosebuckets.PhotoUtils;
@@ -59,6 +62,9 @@ public class SubItemDetailFragment extends Fragment {
     private DatabaseReference subRef;
     private Query query;
 
+    private StorageReference mStorageRef;
+
+
     public SubItemDetailFragment() {
         // Required empty public constructor
     }
@@ -85,6 +91,7 @@ public class SubItemDetailFragment extends Fragment {
         if (getArguments() != null) {
             mSubItem = getArguments().getParcelable(SUB_ITEM);
         }
+        mStorageRef = FirebaseStorage.getInstance().getReference();
     }
 
     @Override
