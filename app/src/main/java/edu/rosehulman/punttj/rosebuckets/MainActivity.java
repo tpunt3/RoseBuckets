@@ -262,23 +262,14 @@ public class MainActivity extends AppCompatActivity
 
             childRef.addListenerForSingleValueEvent(new SubEventListener());
         }
+        else{
 
-//        } else{
-//            Log.d("else", "hello, here we are");
-//            Log.d("request", "" + requestCode);
-//
-//            String subUid = SharedPreferencesUtils.getCurrentSubItem(this);
-//            Log.d("SUB UID", subUid);
-//            DatabaseReference childRef = FirebaseDatabase.getInstance().getReference().child("subItems/"+subUid);
-//
-//            childRef.addListenerForSingleValueEvent(new SubEventListener());
-//
-//            //TODO: there can only be one onActivityResult,
-//            //TODO: so we need to bring the logic from SubItemDetailFragment to here
-//            //TODO: the tricky part will be figuring out a way to have the right SubItem to send in
-//
-//            //(new LoginFragment()).onActivityResult();
-//        }
+            String subUid = SharedPreferencesUtils.getCurrentSubItem(this);
+            DatabaseReference childRef = FirebaseDatabase.getInstance().getReference().child("subItems/"+subUid);
+
+            childRef.addListenerForSingleValueEvent(new SubEventListener());
+
+        }
     }
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
@@ -369,11 +360,8 @@ public class MainActivity extends AppCompatActivity
 
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
-            Log.d("woo", "data change");
             SubItem item = dataSnapshot.getValue(SubItem.class);
             onSubItemSelected(item);
-
-
         }
 
         @Override

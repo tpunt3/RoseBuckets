@@ -79,7 +79,9 @@ public class BLSubItemAdapter extends RecyclerView.Adapter<BLSubItemAdapter.View
     }
 
     public void addItem(SubItem item) {
-        mSubItemRef.push().setValue(item);
+        DatabaseReference newItem = mSubItemRef.push();
+        item.setKey(newItem.getKey());
+        newItem.setValue(item);
     }
 
     void removeItem(SubItem item){
@@ -108,6 +110,9 @@ public class BLSubItemAdapter extends RecyclerView.Adapter<BLSubItemAdapter.View
                 }else{
                     SubItem newItem = new SubItem(blEditText.getText().toString());
                     newItem.setUid(parentUid);
+                    newItem.setComments("");
+                    newItem.setPath("");
+                    newItem.setKey("");
                     addItem(newItem);
                 }
 

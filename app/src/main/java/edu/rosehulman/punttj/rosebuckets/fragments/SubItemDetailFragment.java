@@ -21,6 +21,14 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+
 import edu.rosehulman.punttj.rosebuckets.Constants;
 import edu.rosehulman.punttj.rosebuckets.PhotoUtils;
 import edu.rosehulman.punttj.rosebuckets.R;
@@ -48,8 +56,8 @@ public class SubItemDetailFragment extends Fragment {
 
     private Bitmap mBitmap;
 
-
-
+    private DatabaseReference subRef;
+    private Query query;
 
     public SubItemDetailFragment() {
         // Required empty public constructor
@@ -82,15 +90,21 @@ public class SubItemDetailFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_sub_item_detail, container, false);
         mTitleView = (TextView) view.findViewById(R.id.fragment_detail_title);
-        mTitleView.setText(mSubItem.getTitle());
+        //mTitleView.setText(mSubItem.getTitle());
 
         mImageView = (ImageView) view.findViewById(R.id.sub_item_photo);
 
         mCommentView = (TextView) view.findViewById(R.id.sub_item_comment_textView);
-        mCommentView.setText(mSubItem.getComments());
+        //mCommentView.setText(mSubItem.getComments());
+
+
+        subRef = FirebaseDatabase.getInstance().getReference().child("subItems").child(mSubItem.getKey());
+        subRef.addChildEventListener(new DetailChildEventListener());
 
         Button editButton = (Button) view.findViewById(R.id.edit_button);
         editButton.setOnClickListener(new View.OnClickListener() {
@@ -107,7 +121,15 @@ public class SubItemDetailFragment extends Fragment {
                 takePhoto();
             }
         });
-
+        
+        if(!(mSubItem.getPath() == null) && !(mSubItem.getPath().equals(""))) {
+            mBitmap = BitmapFactory.decodeFile(mSubItem.getPath());
+            int width = 512;
+            int height = 512;
+            mBitmap = Bitmap.createScaledBitmap(mBitmap, width, height, true);
+            mImageView.setImageBitmap(mBitmap);
+            Log.d(Constants.PHOTO_TAG, "trying to see how far we get!!!");
+        }
         return view;
 
     }
@@ -127,6 +149,7 @@ public class SubItemDetailFragment extends Fragment {
                 Log.d("subItem", "OK pressed");
                 String caption = captionET.getText().toString();
                 mSubItem.setComments(caption);
+                subRef.setValue(mSubItem);
                 showCurrentItem();
             }
         });
@@ -141,13 +164,9 @@ public class SubItemDetailFragment extends Fragment {
         cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
         Log.d(Constants.PHOTO_TAG, "Path: " + uri.getPath());
         startActivityForResult(cameraIntent, Constants.RC_PHOTO_ACTIVITY);
+        Log.d("PATH!!", uri.getPath());
         mSubItem.setPath(uri.getPath());
-    }
-
-    private void loadFromGallery() {
-        Log.d(Constants.PHOTO_TAG, "loadFromGallery() started");
-        Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(galleryIntent, Constants.PICK_FROM_GALLERY_REQUEST);
+        subRef.setValue(mSubItem);
     }
 
     private void showCurrentItem() {
@@ -170,44 +189,59 @@ public class SubItemDetailFragment extends Fragment {
             int height = 512;
             mBitmap = Bitmap.createScaledBitmap(mBitmap, width, height, true);
             mImageView.setImageBitmap(mBitmap);
+            subRef.setValue(mSubItem);
             Log.d(Constants.PHOTO_TAG, "trying to see how far we get");
+            return;
         }
-
-        if (requestCode == Constants.PICK_FROM_GALLERY_REQUEST) {
-            Log.d(Constants.PHOTO_TAG, "Back up from the gallery");
-            Uri uri = data.getData();
-            String realPath = getRealPathFromUri(uri);
-            mBitmap = BitmapFactory.decodeFile(realPath);
-            int width = 512;
-            int height = 512;
-            mBitmap = Bitmap.createScaledBitmap(mBitmap, width, height, true);
-            mImageView.setImageBitmap(mBitmap);
-            mSubItem.setPath(realPath);
-
-        }
-
 
     }
 
-    public void setImage() {
-        Log.d(Constants.PHOTO_TAG, "yay! we're good till this far");
-        mBitmap = BitmapFactory.decodeFile(mSubItem.getPath());
-        int width = 512;
-        int height = 512;
-        mBitmap = Bitmap.createScaledBitmap(mBitmap, width, height, true);
-        mImageView.setImageBitmap(mBitmap);
-        Log.d(Constants.PHOTO_TAG, "trying to see how far we get");
-    }
+    class DetailChildEventListener implements ChildEventListener {
+        @Override
+        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+            if(dataSnapshot.getKey().equals("comments")){
+                String comment = dataSnapshot.getValue(String.class);
+                mSubItem.setComments(comment);
+                mCommentView.setText(comment);
+            }else if(dataSnapshot.getKey().equals("path")){
+                String path = dataSnapshot.getValue(String.class);
+                mSubItem.setPath(path);
+            }else if(dataSnapshot.getKey().equals("title")){
+                String title = dataSnapshot.getValue(String.class);
+                mSubItem.setTitle(title);
+                mTitleView.setText(title);
+            }
+        }
 
+        @Override
+        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+            if(dataSnapshot.getKey().equals("comments")){
+                String comment = dataSnapshot.getValue(String.class);
+                mSubItem.setComments(comment);
+                mCommentView.setText(comment);
+            }else if(dataSnapshot.getKey().equals("path")){
+                String path = dataSnapshot.getValue(String.class);
+                mSubItem.setPath(path);
+            }else if(dataSnapshot.getKey().equals("title")){
+                String title = dataSnapshot.getValue(String.class);
+                mSubItem.setTitle(title);
+                mTitleView.setText(title);
+            }
+        }
 
-    private String getRealPathFromUri(Uri contentUri) {
-        String[] projection = {MediaStore.Images.Media.DATA};
-        CursorLoader cursorLoader = new CursorLoader(getContext(), contentUri,
-                projection, null, null, null);
-        Cursor cursor = cursorLoader.loadInBackground();
-        cursor.moveToFirst();
-        int columnIndex = cursor
-                .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-        return cursor.getString(columnIndex);
+        @Override
+        public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+        }
+
+        @Override
+        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+
+        }
     }
 }
