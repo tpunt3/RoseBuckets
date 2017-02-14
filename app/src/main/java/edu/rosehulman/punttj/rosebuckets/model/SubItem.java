@@ -16,6 +16,7 @@ public class SubItem implements Parcelable {
     private String uid;
     private String key;
     private String path;
+    private boolean complete;
 
     public SubItem() {
         this.title = "no title";
@@ -32,6 +33,7 @@ public class SubItem implements Parcelable {
         comments = in.readString();
         uid = in.readString();
         key = in.readString();
+        complete = in.readByte() != 0;
     }
 
     public static final Creator<SubItem> CREATOR = new Creator<SubItem>() {
@@ -95,6 +97,7 @@ public class SubItem implements Parcelable {
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeString(title);
         parcel.writeString(comments);
+        parcel.writeByte((byte) (complete ? 1 : 0));
     }
 
     public void update(SubItem item){
@@ -110,5 +113,13 @@ public class SubItem implements Parcelable {
 
     public void setPath(String path) {
         this.path = path;
+    }
+
+    public boolean getComplete() {
+        return complete;
+    }
+
+    public void setComplete(boolean complete) {
+        this.complete = complete;
     }
 }

@@ -11,13 +11,22 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import edu.rosehulman.punttj.rosebuckets.SharedPreferencesUtils;
 import edu.rosehulman.punttj.rosebuckets.adapters.BucketListItemAdapter;
 import edu.rosehulman.punttj.rosebuckets.R;
+import edu.rosehulman.punttj.rosebuckets.model.BucketList;
 import edu.rosehulman.punttj.rosebuckets.model.BucketListItem;
 
 /**
@@ -34,6 +43,27 @@ public class BucketListItemFragment extends Fragment{
 
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        titleText = (TextView) getView().findViewById(R.id.title_text);
+
+        String uid = SharedPreferencesUtils.getCurrentBucketList(getContext());
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("bucketLists/"+uid);
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                BucketList list = dataSnapshot.getValue(BucketList.class);
+                titleText.setText(list.getName());
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {

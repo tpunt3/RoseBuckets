@@ -72,6 +72,7 @@ public class BucketListItemAdapter extends RecyclerView.Adapter<BucketListItemAd
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         holder.mCheckbox.setText(mBucketListItems.get(position).getName());
+        holder.mCheckbox.setChecked(mBucketListItems.get(position).isCompleted());
     }
 
     public void setTitleText(TextView titleText){
@@ -104,8 +105,8 @@ public class BucketListItemAdapter extends RecyclerView.Adapter<BucketListItemAd
             public void onClick(DialogInterface dialogInterface, int i) {
 
                 if(item != null){
-                    //todo update
                     item.setName(blEditText.getText().toString());
+                    mItemRef.child(item.getKey()).setValue(item);
                 }else{
                     BucketListItem newItem = new BucketListItem(blEditText.getText().toString());
                     newItem.setUid(mUid);
@@ -115,12 +116,14 @@ public class BucketListItemAdapter extends RecyclerView.Adapter<BucketListItemAd
             }
         });
 
-        builder.setNeutralButton(R.string.edit_delete, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                remove(item);
-            }
-        });
+        if(item != null) {
+            builder.setNeutralButton(R.string.edit_delete, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    remove(item);
+                }
+            });
+        }
         builder.setNegativeButton(android.R.string.cancel, null);
         builder.create().show();
     }
@@ -134,24 +137,40 @@ public class BucketListItemAdapter extends RecyclerView.Adapter<BucketListItemAd
     class ViewHolder extends RecyclerView.ViewHolder {
 
         private CheckBox mCheckbox;
+        private BucketListItem item;
 
         public ViewHolder(View itemView) {
             super(itemView);
 
             mCheckbox = (CheckBox) itemView.findViewById(R.id.checkBox);
 
+            mCheckbox.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    item = mBucketListItems.get(getAdapterPosition());
+                    if (mCheckbox.isChecked()){
+                        item.setCompleted(true);
+                    }else{
+                        item.setCompleted(false);
+                    }
+                    mItemRef.child(item.getKey()).setValue(item);
+                }
+            });
+
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    item = mBucketListItems.get(getAdapterPosition());
                     //create new bucket list item fragment
-                    mListener.onBLItemSelected(mBucketListItems.get(getAdapterPosition()));
+                    mListener.onBLItemSelected(item);
                 }
             });
 
             itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
-                    addEditBucketListItem(mBucketListItems.get(getAdapterPosition()));
+                    item = mBucketListItems.get(getAdapterPosition());
+                    addEditBucketListItem(item);
                     return true;
                 }
             });
@@ -185,7 +204,7 @@ public class BucketListItemAdapter extends RecyclerView.Adapter<BucketListItemAd
         @Override
         public void onChildRemoved(DataSnapshot dataSnapshot) {
             for(BucketListItem item: mBucketListItems){
-                if(item.getKey().equals(key)){
+                if(item.getKey().equals(dataSnapshot.getKey())){
                     mBucketListItems.remove(item);
                     notifyDataSetChanged();
                     return;

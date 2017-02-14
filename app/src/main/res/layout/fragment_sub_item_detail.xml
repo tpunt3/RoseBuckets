@@ -39,13 +39,13 @@
     </ScrollView>
 
     <Button
-        android:text="Edit"
+        android:text="@string/add_comment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/edit_button" />
 
     <Button
-        android:text="Add a pic!"
+        android:text="@string/add_a_pic"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/add_pic_button" />

@@ -2,19 +2,31 @@ package edu.rosehulman.punttj.rosebuckets.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import edu.rosehulman.punttj.rosebuckets.SharedPreferencesUtils;
 import edu.rosehulman.punttj.rosebuckets.adapters.BLSubItemAdapter;
 import edu.rosehulman.punttj.rosebuckets.R;
+import edu.rosehulman.punttj.rosebuckets.model.BucketListItem;
 import edu.rosehulman.punttj.rosebuckets.model.SubItem;
+
+import static edu.rosehulman.punttj.rosebuckets.SharedPreferencesUtils.getCurrentSubItem;
 
 /**
  * Created by punttj on 1/22/2017.
@@ -25,9 +37,32 @@ public class BucketListSubItemFragment extends Fragment {
     private OnSubItemSelectedListener mListener;
     private BLSubItemAdapter mAdapter;
     private FloatingActionButton mFab;
+    private TextView titleText;
 
     public BucketListSubItemFragment() {
         //required empty constructor
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        titleText = (TextView) getView().findViewById(R.id.subTitle);
+        Log.e("ITEM", "SUBITEM RESUME");
+        String uid = SharedPreferencesUtils.getCurrentBucketListItem(getContext());
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("items/"+uid);
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                BucketListItem item = dataSnapshot.getValue(BucketListItem.class);
+                titleText.setText(item.getName());
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
     }
 
     @Override

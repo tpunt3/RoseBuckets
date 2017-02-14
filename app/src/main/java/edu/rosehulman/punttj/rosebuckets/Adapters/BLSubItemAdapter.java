@@ -70,7 +70,8 @@ public class BLSubItemAdapter extends RecyclerView.Adapter<BLSubItemAdapter.View
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         final SubItem current = mSubItems.get(position);
-        holder.mCheckBox.setText(current.getTitle());
+        holder.mCheckbox.setText(current.getTitle());
+        holder.mCheckbox.setChecked(current.getComplete());
 
     }
 
@@ -107,6 +108,7 @@ public class BLSubItemAdapter extends RecyclerView.Adapter<BLSubItemAdapter.View
                 if(item != null){
                     //todo update
                     item.setTitle(blEditText.getText().toString());
+                    mSubItemRef.child(item.getKey()).setValue(item);
                 }else{
                     SubItem newItem = new SubItem(blEditText.getText().toString());
                     newItem.setUid(parentUid);
@@ -120,12 +122,16 @@ public class BLSubItemAdapter extends RecyclerView.Adapter<BLSubItemAdapter.View
                 notifyDataSetChanged();
             }
         });
-        builder.setNeutralButton(R.string.edit_delete, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                removeItem(item);
-            }
-        });
+
+        if(item != null) {
+            builder.setNeutralButton(R.string.edit_delete, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    removeItem(item);
+                }
+            });
+        }
+
         builder.setNegativeButton(android.R.string.cancel, null);
         builder.create().show();
     }
@@ -138,12 +144,27 @@ public class BLSubItemAdapter extends RecyclerView.Adapter<BLSubItemAdapter.View
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
-        private CheckBox mCheckBox;
+        private CheckBox mCheckbox;
+        private SubItem item;
 
         public ViewHolder(View itemView) {
             super(itemView);
 
-            mCheckBox = (CheckBox) itemView.findViewById(R.id.SIcheckBox);
+            mCheckbox = (CheckBox) itemView.findViewById(R.id.SIcheckBox);
+
+            mCheckbox.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    item = mSubItems.get(getAdapterPosition());
+                    if (mCheckbox.isChecked()){
+                        item.setComplete(true);
+                    }else{
+                        item.setComplete(false);
+                    }
+                    mSubItemRef.child(item.getKey()).setValue(item);
+                }
+            });
+
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -169,7 +190,7 @@ public class BLSubItemAdapter extends RecyclerView.Adapter<BLSubItemAdapter.View
             item.setKey(dataSnapshot.getKey());
             item.setUid(parentUid);
             mSubItems.add(0, item);
-            notifyItemInserted(0);
+            notifyDataSetChanged();
         }
 
         @Override
