@@ -2,7 +2,6 @@ package edu.rosehulman.punttj.rosebuckets;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -79,6 +78,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d("MainActivity", "onCreate called in main activity");
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -102,6 +102,9 @@ public class MainActivity extends AppCompatActivity
         mFirebaseRef = FirebaseDatabase.getInstance().getReference();
         mStorageRef = FirebaseStorage.getInstance().getReference();
 
+        String savedString = (savedInstanceState == null) ? "this is null" : savedInstanceState.toString();
+
+        Log.d("Main Activity", "saved Instance state: " + savedString);
         if (savedInstanceState == null) {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             Fragment fragment = new LoginFragment();
@@ -118,7 +121,20 @@ public class MainActivity extends AppCompatActivity
                 if(user != null){
                     SharedPreferencesUtils.setCurrentUser(MainActivity.this, user.getUid());
                     SharedPreferencesUtils.setCurrentUserName(MainActivity.this, user.getUid());
-                    switchToBLFragment();
+                    Log.e("auth state", "changed");
+
+                    FragmentManager fm = getSupportFragmentManager();
+                    if (fm.getBackStackEntryCount() == 0) {
+                        switchToBLFragment();
+                    }
+
+                    if (fm.getBackStackEntryCount() >= 1) {
+                        Log.e("backstack", fm.getBackStackEntryAt(fm.getBackStackEntryCount() - 1).getName());
+                        if (!fm.getBackStackEntryAt(fm.getBackStackEntryCount() - 1).getName().equals("subItem")) {
+                            switchToBLFragment();
+                        }
+                    }
+
                 }else {
                     switchToLoginFragment();
                 }
@@ -170,8 +186,6 @@ public class MainActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-
-
             FragmentManager fm = getSupportFragmentManager();
             if(fm.getBackStackEntryCount() > 1) {
                 if (fm.getBackStackEntryAt(fm.getBackStackEntryCount() - 1).getName().equals("login")) {
@@ -270,6 +284,7 @@ public class MainActivity extends AppCompatActivity
                         .addOnCompleteListener(this, mOnCompleteListener);
             }
         } else if (requestCode == Constants.RC_PHOTO_ACTIVITY) {
+            Log.d("Main Activity", "request Code is PHOTO ACTIVITY, MainActivity onActivityResult");
             String subUid = SharedPreferencesUtils.getCurrentSubItem(this);
             Log.d("SUB UID", subUid);
             DatabaseReference childRef = FirebaseDatabase.getInstance().getReference().child("subItems/" + subUid);
@@ -277,6 +292,8 @@ public class MainActivity extends AppCompatActivity
             childRef.addListenerForSingleValueEvent(new SubEventListener());
         }
         else{
+            Log.d("Main Acitivy", "else case, MainActivity onActivityResult");
+            Log.d("Main Activity", "request code = " + requestCode);
 
             String subUid = SharedPreferencesUtils.getCurrentSubItem(this);
             DatabaseReference childRef = FirebaseDatabase.getInstance().getReference().child("subItems/"+subUid);
@@ -353,6 +370,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onSubItemSelected(SubItem subItem) {
         fab.setVisibility(View.GONE);
+        Log.e("transition to sub", subItem.getTitle());
         SharedPreferencesUtils.setCurrentSubItem(this, subItem.getKey());
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         Fragment fragment = SubItemDetailFragment.newInstance(subItem);
@@ -416,6 +434,7 @@ public class MainActivity extends AppCompatActivity
 
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
+            Log.e("data change", "!!!!!!");
             SubItem item = dataSnapshot.getValue(SubItem.class);
             uploadPhoto(item.getPath());
             onSubItemSelected(item);

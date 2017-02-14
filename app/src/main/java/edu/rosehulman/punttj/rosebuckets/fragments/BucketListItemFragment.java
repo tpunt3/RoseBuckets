@@ -23,9 +23,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import edu.rosehulman.punttj.rosebuckets.R;
 import edu.rosehulman.punttj.rosebuckets.SharedPreferencesUtils;
 import edu.rosehulman.punttj.rosebuckets.adapters.BucketListItemAdapter;
-import edu.rosehulman.punttj.rosebuckets.R;
 import edu.rosehulman.punttj.rosebuckets.model.BucketList;
 import edu.rosehulman.punttj.rosebuckets.model.BucketListItem;
 
@@ -68,11 +68,15 @@ public class BucketListItemFragment extends Fragment{
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        Log.d("ItemFragment", "onActivityCreated");
         // Need to wait for the activity to be created to have an action bar.
         ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
         actionBar.setTitle(R.string.app_name);
         int defaultColor = ContextCompat.getColor(getContext(), R.color.colorPrimary);
         actionBar.setBackgroundDrawable(new ColorDrawable(defaultColor));
+
+        titleText = (TextView) getActivity().findViewById(R.id.title_text);
+        mAdapter.setTitleText(titleText);
 
         mFab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
         mFab.setOnClickListener(new View.OnClickListener() {
@@ -83,9 +87,11 @@ public class BucketListItemFragment extends Fragment{
         });
     }
 
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d("ItemFragment", "onCreate");
         // The adapter needs the listener so that when a painting is selected, it can
         // ask the listener (the MainActivity) to switch out the fragment.
 
@@ -96,6 +102,7 @@ public class BucketListItemFragment extends Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        Log.d("ItemFragment", "onCreateView");
         View view = inflater.inflate(R.layout.fragment_bucket_list_items, container, false);
         titleText = (TextView) view.findViewById(R.id.title_text);
         mAdapter.setTitleText(titleText);
