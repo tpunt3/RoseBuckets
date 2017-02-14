@@ -14,7 +14,9 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.transition.Slide;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -121,7 +123,7 @@ public class MainActivity extends AppCompatActivity
                 if(user != null){
                     SharedPreferencesUtils.setCurrentUser(MainActivity.this, user.getUid());
                     SharedPreferencesUtils.setCurrentUserName(MainActivity.this, user.getUid());
-                    Log.e("auth state", "changed");
+
 
                     FragmentManager fm = getSupportFragmentManager();
                     if (fm.getBackStackEntryCount() == 0) {
@@ -129,7 +131,6 @@ public class MainActivity extends AppCompatActivity
                     }
 
                     if (fm.getBackStackEntryCount() >= 1) {
-                        Log.e("backstack", fm.getBackStackEntryAt(fm.getBackStackEntryCount() - 1).getName());
                         if (!fm.getBackStackEntryAt(fm.getBackStackEntryCount() - 1).getName().equals("subItem")) {
                             switchToBLFragment();
                         }
@@ -340,12 +341,20 @@ public class MainActivity extends AppCompatActivity
         loginFragment.onLoginError(message);
     }
 
+    private Slide getSlide() {
+        Slide slideTransition = new Slide(Gravity.RIGHT);
+        slideTransition.setDuration(500);
+        return slideTransition;
+    }
+
     @Override
     public void onBLSelected(BucketList bl) {
         fab.setVisibility(View.VISIBLE);
         SharedPreferencesUtils.setCurrentBucketList(this, bl.getKey());
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         Fragment fragment = new BucketListItemFragment();
+        fragment.setEnterTransition(getSlide());
+
         ft.replace(R.id.content_main, fragment);
         ft.addToBackStack("bl");
         ft.commit();
@@ -357,6 +366,8 @@ public class MainActivity extends AppCompatActivity
         SharedPreferencesUtils.setCurrentBucketListItem(this, item.getKey());
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         Fragment fragment = new BucketListSubItemFragment();
+        fragment.setEnterTransition(getSlide());
+
         ft.replace(R.id.content_main, fragment);
         ft.addToBackStack("blItem");
         ft.commit();
@@ -368,6 +379,7 @@ public class MainActivity extends AppCompatActivity
         SharedPreferencesUtils.setCurrentSubItem(this, subItem.getKey());
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         Fragment fragment = SubItemDetailFragment.newInstance(subItem);
+        fragment.setEnterTransition(getSlide());
         ft.replace(R.id.content_main, fragment);
         ft.addToBackStack("subItem");
         ft.commit();
