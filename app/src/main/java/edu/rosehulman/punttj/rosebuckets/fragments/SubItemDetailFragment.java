@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -134,7 +133,6 @@ public class SubItemDetailFragment extends Fragment {
             int height = 512;
             mBitmap = Bitmap.createScaledBitmap(mBitmap, width, height, true);
             mImageView.setImageBitmap(mBitmap);
-            Log.d(Constants.PHOTO_TAG, "trying to see how far we get!!!");
         }
         return view;
 
@@ -152,7 +150,6 @@ public class SubItemDetailFragment extends Fragment {
         builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                Log.d("subItem", "OK pressed");
                 String caption = captionET.getText().toString();
                 mSubItem.setComments(caption);
                 subRef.setValue(mSubItem);
@@ -164,16 +161,12 @@ public class SubItemDetailFragment extends Fragment {
     }
 
     private void takePhoto() {
-        Log.d(Constants.PHOTO_TAG, "takePhoto() started");
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         Uri uri = PhotoUtils.getOutputMediaUri(getString(R.string.app_name));
         cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
-        Log.d(Constants.PHOTO_TAG, "Path: " + uri.getPath());
         startActivityForResult(cameraIntent, Constants.RC_PHOTO_ACTIVITY);
-        Log.d("PATH!!", uri.getPath());
         mSubItem.setPath(uri.getPath());
         subRef.setValue(mSubItem);
-        Log.d(Constants.PHOTO_TAG, "end of takePhoto()");
 
     }
 
@@ -191,14 +184,12 @@ public class SubItemDetailFragment extends Fragment {
         }
 
         if (requestCode == Constants.RC_PHOTO_ACTIVITY) {
-            Log.d(Constants.PHOTO_TAG, "Detail Fragment's onActivityResult, requestCode = PHOTO ACTIVITY");
             mBitmap = BitmapFactory.decodeFile(mSubItem.getPath());
             int width = 512;
             int height = 512;
             mBitmap = Bitmap.createScaledBitmap(mBitmap, width, height, true);
             mImageView.setImageBitmap(mBitmap);
             subRef.setValue(mSubItem);
-            Log.d(Constants.PHOTO_TAG, "trying to see how far we get");
             return;
         }
 

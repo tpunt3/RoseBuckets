@@ -38,14 +38,6 @@
         android:layout_marginTop="40dp"
         android:orientation="vertical">
 
-
-        <com.google.android.gms.common.SignInButton
-            android:id="@+id/google_sign_in_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="16dp" />
-
         <Button
             android:id="@+id/rosefire_sign_in_button"
             style="?android:textAppearanceSmall"

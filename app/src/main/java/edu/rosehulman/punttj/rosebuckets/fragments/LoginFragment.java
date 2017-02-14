@@ -32,7 +32,6 @@ public class LoginFragment extends Fragment {
     private View mProgressSpinner;
     private boolean mLoggingIn;
     private OnLoginListener mListener;
-    private SignInButton mGoogleSignInButton;
 
     public LoginFragment() {
         // Required empty public constructor
@@ -59,16 +58,7 @@ public class LoginFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_login, container, false);
         mLoginForm = rootView.findViewById(R.id.login_form);
         mProgressSpinner = rootView.findViewById(R.id.login_progress);
-        mGoogleSignInButton = (SignInButton) rootView.findViewById(R.id.google_sign_in_button);
         View rosefireLoginButton = rootView.findViewById(R.id.rosefire_sign_in_button);
-        mGoogleSignInButton.setColorScheme(SignInButton.COLOR_LIGHT);
-        mGoogleSignInButton.setSize(SignInButton.SIZE_WIDE);
-        mGoogleSignInButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                loginWithGoogle();
-            }
-        });
         rosefireLoginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -89,17 +79,6 @@ public class LoginFragment extends Fragment {
     }
 
 
-    private void loginWithGoogle() {
-        if (mLoggingIn) {
-            return;
-        }
-
-        showProgress(true);
-        mLoggingIn = true;
-        mListener.onGoogleLogin();
-    }
-
-
     public void onLoginError(String message) {
         new AlertDialog.Builder(getActivity())
                 .setTitle(getActivity().getString(R.string.login_error))
@@ -115,7 +94,6 @@ public class LoginFragment extends Fragment {
     private void showProgress(boolean show) {
         mProgressSpinner.setVisibility(show ? View.VISIBLE : View.GONE);
         mLoginForm.setVisibility(show ? View.GONE : View.VISIBLE);
-        mGoogleSignInButton.setVisibility(show ? View.GONE : View.VISIBLE);
     }
 
     @Override

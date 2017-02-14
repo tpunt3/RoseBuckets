@@ -284,16 +284,12 @@ public class MainActivity extends AppCompatActivity
                         .addOnCompleteListener(this, mOnCompleteListener);
             }
         } else if (requestCode == Constants.RC_PHOTO_ACTIVITY) {
-            Log.d("Main Activity", "request Code is PHOTO ACTIVITY, MainActivity onActivityResult");
             String subUid = SharedPreferencesUtils.getCurrentSubItem(this);
-            Log.d("SUB UID", subUid);
             DatabaseReference childRef = FirebaseDatabase.getInstance().getReference().child("subItems/" + subUid);
 
             childRef.addListenerForSingleValueEvent(new SubEventListener());
         }
         else{
-            Log.d("Main Acitivy", "else case, MainActivity onActivityResult");
-            Log.d("Main Activity", "request code = " + requestCode);
 
             String subUid = SharedPreferencesUtils.getCurrentSubItem(this);
             DatabaseReference childRef = FirebaseDatabase.getInstance().getReference().child("subItems/"+subUid);
@@ -304,7 +300,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
-        Log.d("firebase", "firebaseAuthWithGoogle:" + acct.getId());
 
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         mAuth.signInWithCredential(credential)
@@ -370,7 +365,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onSubItemSelected(SubItem subItem) {
         fab.setVisibility(View.GONE);
-        Log.e("transition to sub", subItem.getTitle());
         SharedPreferencesUtils.setCurrentSubItem(this, subItem.getKey());
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         Fragment fragment = SubItemDetailFragment.newInstance(subItem);
@@ -434,7 +428,6 @@ public class MainActivity extends AppCompatActivity
 
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
-            Log.e("data change", "!!!!!!");
             SubItem item = dataSnapshot.getValue(SubItem.class);
             uploadPhoto(item.getPath());
             onSubItemSelected(item);
