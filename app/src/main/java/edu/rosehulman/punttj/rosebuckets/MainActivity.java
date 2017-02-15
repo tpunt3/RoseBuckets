@@ -14,7 +14,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.transition.Explode;
 import android.transition.Slide;
 import android.util.Log;
 import android.view.Gravity;
@@ -356,9 +355,7 @@ public class MainActivity extends AppCompatActivity
         Fragment fragment = new BucketListItemFragment();
         // fragment.setEnterTransition(getSlide());
 
-        Explode e = new Explode();
-        e.setDuration(500);
-        fragment.setEnterTransition(e);
+        fragment.setEnterTransition(getSlide());
 
         ft.replace(R.id.content_main, fragment);
         ft.addToBackStack("bl");
